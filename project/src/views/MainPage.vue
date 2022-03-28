@@ -323,6 +323,7 @@ export default {
     exitLogin() {
       this.username = ''
       localStorage.removeItem('username')
+      this.isLogin = false
     },
     openDialog() {
       if (!this.isLogin) {
