@@ -6,6 +6,7 @@ var userTable = require('../controllers/dbtableController')
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-router.post('/login',userTable.login)
 
+router.post('/login',userTable.login)
+router.post('/register', userTable.register)
 module.exports = router;

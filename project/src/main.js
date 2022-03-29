@@ -9,6 +9,7 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
+axios.defaults.baseURL = "http://localhost:3000"
 
 document.title = '风电虚拟仿真系统'
 

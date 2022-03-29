@@ -18,6 +18,9 @@
         label-width="100px"
         class="demo-ruleForm"
       >
+        <el-form-item label="学校" prop="school">
+          <el-input v-model="loginForm.school"></el-input>
+        </el-form-item>
         <el-form-item label="学号(工号)" prop="studentnumber">
           <el-input v-model="loginForm.studentnumber"></el-input>
         </el-form-item>
@@ -50,6 +53,12 @@
         <el-form-item label="学号(工号)" prop="studentnumber">
           <el-input v-model="ruleForm.studentnumber"></el-input>
         </el-form-item>
+        <el-form-item label="身份" prop="power">
+          <el-select v-model="ruleForm.power" placeholder="请选择" style="width:100%">
+            <el-option label="学生" value="学生"></el-option>
+            <el-option label="教师" value="教师"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
@@ -68,7 +77,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="$emit('dialogFalse')"
+          <el-button type="primary" @click="subRegister"
             >提交</el-button
           >
           <el-button @click="$emit('dialogFalse')">取消</el-button>
@@ -87,6 +96,7 @@ export default {
     return {
       // dialogFormVisible : false,
       loginForm: {
+        school: "",
         studentnumber: "",
         password: "",
       },
@@ -96,8 +106,11 @@ export default {
         name: "",
         password: "",
         checkPass: "",
+        // 权限默认为学生
+        power: '学生'
       },
       rules: {
+        school: [{ validator: this.validateSchool, trigger: "blur" }],
         password: [{ validator: this.validatePass, trigger: "blur" }],
         checkPass: [{ validator: this.validatePass2, trigger: "blur" }],
         studentnumber: [{ validator: this.checkStudentnumber, trigger: "blur" }],
@@ -106,6 +119,15 @@ export default {
   },
 
   methods: {
+    validateSchool(rule, value, callback) {
+      if (!value) {
+        this.schoolIsNotNull = false;
+        callback(new Error("学校不能为空"));
+      } else {
+        this.schoolIsNotNull = true;
+        callback();
+      }
+    },
     checkStudentnumber(rule, value, callback) {
       if (!value) {
         this.numIsNotNull = false;
@@ -141,9 +163,9 @@ export default {
     },
 
     subLogin() {
-      if (this.numIsNotNull && this.passIsNotNull) {
+      if (this.numIsNotNull && this.passIsNotNull && this.schoolIsNotNull) {
         this.$axios
-          .post("http://localhost:3000/login", {
+          .post("/login", {
             ...this.loginForm,
           })
           .then((res) => {
@@ -163,6 +185,7 @@ export default {
                 this.loginForm.studentnumber
               );
               this.loginForm = {
+                school: "",
                 studentnumber: "",
                 password: "",
               }
@@ -170,7 +193,7 @@ export default {
             } else {
               this.$message({
                 showClose: true,
-                message: "学号或密码错误",
+                message: "学校、学号或密码错误",
                 type: "warning",
               });
             }
@@ -186,11 +209,70 @@ export default {
       }else{
         this.$message({
           showClose: true,
-          message: "请输入学号和密码",
+          message: "请输入内容",
           type: "warning",
         });
       }
     },
+
+    subRegister() {
+      if (this.numIsNotNull && this.passIsNotNull && this.pass2IsNotNull && this.schoolIsNotNull) {
+        this.$axios
+          .post("/register", {
+            school: this.ruleForm.school,
+            studentnumber: this.ruleForm.studentnumber,
+            name: this.ruleForm.name,
+            password: this.ruleForm.password,
+            power: this.ruleForm.power
+          })
+          .then((res) => {
+            let { code, msg } = res.data;
+            if (code == 200) {
+              this.$message({
+                showClose: true,
+                message: msg,
+                type: "success",
+              });
+
+              setStorage('username', this.ruleForm.studentnumber, 0.5)
+              this.userPower = res.data.power;
+              this.$emit(
+                "userLogin",
+                this.userPower,
+                this.ruleForm.studentnumber
+              );
+              this.ruleForm = {
+                school: "",
+                studentnumber: "",
+                name: "",
+                password: "",
+                checkPass: "",
+                power: '学生'
+              }
+            } else {
+              this.$message({
+                showClose: true,
+                message: msg ,
+                type: "warning",
+              });
+            }
+          })
+          .catch((err) => {
+            // console.log(err)
+            this.$message({
+              showClose: true,
+              message: "注册失败: " + err,
+              type: "warning",
+            });
+          });
+      }else{
+        this.$message({
+          showClose: true,
+          message: "请输入内容",
+          type: "warning",
+        });
+      }
+    }
   },
 };
 </script>
