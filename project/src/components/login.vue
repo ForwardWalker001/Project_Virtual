@@ -177,7 +177,11 @@ export default {
                 type: "success",
               });
 
-              setStorage('username', this.loginForm.studentnumber, 0.5)
+              setStorage('userInfo', {
+                'id': res.data.id,
+                'username': this.loginForm.studentnumber,
+                'userPower':  res.data.power
+              }, 0.5)
               this.userPower = res.data.power;
               this.$emit(
                 "userLogin",
@@ -215,6 +219,7 @@ export default {
       }
     },
 
+    // 注册
     subRegister() {
       if (this.numIsNotNull && this.passIsNotNull && this.pass2IsNotNull && this.schoolIsNotNull) {
         this.$axios
@@ -234,7 +239,11 @@ export default {
                 type: "success",
               });
 
-              setStorage('username', this.ruleForm.studentnumber, 0.5)
+              setStorage('userInfo', {
+                'id': res.data.id,
+                'username': this.ruleForm.studentnumber,
+                'userPower':  res.data.power
+              }, 0.5)
               this.userPower = res.data.power;
               this.$emit(
                 "userLogin",

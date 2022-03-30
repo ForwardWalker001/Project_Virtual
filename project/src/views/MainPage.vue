@@ -8,8 +8,10 @@
         <div @click="goToAnchor('William')" ref="William">实验步骤</div>
         <div @click="goToAnchor('Jorge')" ref="Jorge">成绩评定与查看</div>
       </div>
-      <el-tooltip :disabled="username==''" placement="bottom">
-        <span slot="content" style="cursor: pointer;" @click="exitLogin">退出登录</span>
+      <el-tooltip :disabled="username == ''" placement="bottom">
+        <span slot="content" style="cursor: pointer" @click="exitLogin"
+          >退出登录</span
+        >
         <div class="userInfo">
           <i class="el-icon-user"></i>
           <div class="login" @click="loginForm($event)">
@@ -197,29 +199,42 @@
           </div>
         </div>
         <!-- 如果登录为学生，弹出成绩表单 -->
-        <div v-if="1" style="margin-bottom: 10px">
+        <div v-if="userPower == 2" style="margin-bottom: 10px">
           <el-button type="success" plain @click="openDialog"
             >查看我的成绩</el-button
           >
           <el-dialog title="我的成绩" :visible.sync="dialogTableVisible">
             <el-table :data="gridData">
+              <el-table-column property="school" label="学校"></el-table-column>
               <el-table-column
-                property="date"
-                label="日期"
+                property="studentnumber"
+                label="学号"
                 width="150"
               ></el-table-column>
               <el-table-column
                 property="name"
                 label="姓名"
-                width="200"
+                width="140"
               ></el-table-column>
               <el-table-column
-                property="address"
-                label="地址"
+                property="score"
+                label="成绩"
+                width="80"
+              ></el-table-column>
+              <el-table-column
+                property="scoredate"
+                label="日期"
+                width="150"
               ></el-table-column>
             </el-table>
           </el-dialog>
         </div>
+        <div v-if="userPower == 0" style="margin-bottom: 10px">
+          <el-button type="success" plain @click="toScoreMang"
+            >查看成绩分析</el-button
+          >
+        </div>
+        <div v-if="userPower == 1"></div>
       </div>
     </div>
   </div>
@@ -236,44 +251,33 @@ export default {
     return {
       preNav: null,
       currtNav: getStorage("nowNav") || "Alisa",
-      gridData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-      ],
+      gridData: [],
       dialogTableVisible: false,
       LoginTableVisible: false,
       formName: "",
       isLogin: false,
-      username: getStorage("username") || "",
+      username: getStorage("userInfo").username || "",
+      userPower: getStorage("userInfo").userPower + "" || null,
     };
   },
   mounted() {
     this.changNavColor(this.currtNav);
     window.addEventListener("scroll", this.debounce(this.changMenu, 100));
 
-    if(this.username!='')this.isLogin = true
+    if (this.username != "") this.isLogin = true;
   },
   methods: {
     gowebGl() {
-      this.$router.push("/webGlpage");
+      if (!this.isLogin) {
+        this.$message({
+          showClose: true,
+          message: "你还未登录，请先登录或注册",
+          type: "warning",
+          duration: 2000,
+        });
+      } else {
+        this.$router.push("/webGlpage");
+      }
     },
     goToAnchor(selector) {
       this.changNavColor(selector);
@@ -322,9 +326,9 @@ export default {
       this.formName = "";
     },
     exitLogin() {
-      this.username = ''
-      localStorage.removeItem('username')
-      this.isLogin = false
+      this.username = "";
+      localStorage.removeItem("userInfo");
+      this.isLogin = false;
     },
     openDialog() {
       if (!this.isLogin) {
@@ -336,7 +340,31 @@ export default {
         });
       } else {
         this.dialogTableVisible = true;
+        this.$axios
+          .get(`/scoreSearch?id=${getStorage("userInfo").id}`)
+          .then((res) => {
+            let { code, msg } = res.data;
+            if (code == 200) {
+              this.gridData = res.data.data;
+            } else {
+              this.$message({
+                showClose: true,
+                message: msg,
+                type: "warning",
+              });
+            }
+          })
+          .catch((err) => {
+            this.$message({
+              showClose: true,
+              message: "注册失败: " + err,
+              type: "warning",
+            });
+          });
       }
+    },
+    toScoreMang() {
+      this.$router.push("/ScoreMang");
     },
     // 防抖
     debounce(fn, delay) {

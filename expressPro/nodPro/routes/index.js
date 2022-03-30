@@ -9,4 +9,6 @@ router.get('/', function(req, res, next) {
 
 router.post('/login',userTable.login)
 router.post('/register', userTable.register)
+router.get('/scoreSearch', userTable.scoreSearch)
+router.get('/changScore', userTable.changScore)
 module.exports = router;
