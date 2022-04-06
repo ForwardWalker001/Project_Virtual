@@ -11,4 +11,6 @@ router.post('/login',userTable.login)
 router.post('/register', userTable.register)
 router.get('/scoreSearch', userTable.scoreSearch)
 router.get('/changScore', userTable.changScore)
+router.get('/allScore', userTable.allScore)
+router.get('/scoreContent', userTable.scoreContent)
 module.exports = router;
