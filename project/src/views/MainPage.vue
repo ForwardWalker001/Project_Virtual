@@ -256,8 +256,8 @@ export default {
       LoginTableVisible: false,
       formName: "",
       isLogin: false,
-      username: getStorage("userInfo").username || "",
-      userPower: getStorage("userInfo").userPower + "" || null,
+      username: getStorage("userInfo") ? getStorage("userInfo").username : "",
+      userPower: getStorage("userInfo") ? getStorage("userInfo").userPower : null,
     };
   },
   mounted() {
