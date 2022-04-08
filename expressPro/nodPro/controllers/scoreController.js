@@ -3,7 +3,7 @@ var changDate = require('../util/dateUtil.js')
 
 // 根据条件筛选分数
 const conditionScore = (req, res) => {
-    var { currentPage, school, name, studentnumber } = req.query
+    var { currentPage, school, name, studentnumber, power } = req.query
     let pageSize = 10
     var indexPage = (currentPage - 1) * pageSize
     let sql1 = ''
@@ -14,24 +14,35 @@ const conditionScore = (req, res) => {
     if (school) {
         sqlArr.push(school)
         sql1 = 'school=?'
-        if (name || studentnumber) {
+        if (name || studentnumber || power) {
             sql1 = sql1 + ' and '
         }
     }
     if (name) {
         sqlArr.push(name)
         sql2 = 'name=?'
-        if (studentnumber) {
+        if (studentnumber || power) {
             sql2 = sql2 + ' and '
         }
     }
     if (studentnumber) {
         sqlArr.push(studentnumber)
         sql3 = 'studentnumber=? '
+        if(power){
+            sql2 = sql3 + ' and '
+        }
     }
-    let sql0 = ''
-    if (sqlArr.length != 0) sql0 = 'where '
-    var sql = `select * from userscore ` + sql0 + sql1 + sql2 + sql3 + ` order by cast(scoredate as datetime) desc ` + `limit ${indexPage},${pageSize}`
+    if(power){
+        if(power == '学生'){
+            sql3 = 'power=2'
+        }else if(power == '教师'){
+            sql3 = 'power=1'
+        }
+
+    }
+    // let sql0 = ''
+    // if (sqlArr.length != 0) sql0 = 'where '
+    var sql = `select * from userscore where ` + sql1 + sql2 + sql3 + ` order by cast(scoredate as datetime) desc ` + `limit ${indexPage},${pageSize}`
     // console.log(sql)
 
     // 筛选的总条数 total
@@ -69,7 +80,7 @@ const conditionScore = (req, res) => {
         dbConfig.sqlConnect(sqlNum, sqlArr, callBack)
     }
     // var total = 10
-    let sqlNum = `select count(*) from userscore ` + sql0 + sql1 + sql2 + sql3
+    let sqlNum = `select count(*) from userscore where ` + sql1 + sql2 + sql3
 
     numCondition(sqlNum, sqlArr)
 

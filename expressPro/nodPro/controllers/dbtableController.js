@@ -138,62 +138,6 @@ const scoreSearch = (req, res) => {
     dbConfig.sqlConnect(sql, sqlArr, callBack)
 }
 
-// 获取总条数select count(*) from 表
-const scoreContent = (req, res) => {
-    var sql = `select count(*) from userscore`
-    var sqlArr = []
-    var callBack = (err, data) => {
-        if (err) {
-            console.log('连接出错了', err)
-            res.send({
-                'code': 400,
-                'msg': '获取总条数失败'
-            })
-        } else {
-                res.send({
-                    'code': 200,
-                    'msg': '查询成功',
-                    'data': data[0]["count(*)"]
-                })
-        }
-    }
-    dbConfig.sqlConnect(sql, sqlArr, callBack)
-}
-// 输出所有学生分数
-const allScore = (req, res) => {
-    var { currentPage  } = req.query
-    let pageSize = 10
-    var indexPage = (currentPage - 1) * pageSize
-    // id = parseInt(id)
-    // var sql = 'select * from userscore order by id desc';select * from table limit (currentPage-1)*pageSize,pageSize
-    var sql = `select * from userscore  order by cast(scoredate as datetime) desc limit ${indexPage},${pageSize}`
-    var sqlArr = []
-    var callBack = (err, data) => {
-        if (err) {
-            console.log('连接出错了', err)
-            res.send({
-                'code': 400,
-                'msg': '查询出错了'
-            })
-        } else {
-            if (data.length == 0) {
-                res.send({
-                    'code': 400,
-                    'msg': '没有数据'
-                })
-            } else {
-                res.send({
-                    'code': 200,
-                    'msg': '查询成功',
-                    'length': data.length,
-                    'data': data
-                })
-            }
-
-        }
-    }
-    dbConfig.sqlConnect(sql, sqlArr, callBack)
-}
 // 修改分数
 const changScore = (req, res) => {
     let { user_id, score } = req.query
@@ -223,6 +167,4 @@ module.exports = {
     register,
     scoreSearch,
     changScore,
-    scoreContent,
-    allScore
 }

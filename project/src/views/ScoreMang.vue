@@ -10,27 +10,33 @@
       </div>
       <!-- 搜索区 -->
       <div class="demo-form-inline">
-        <el-form :inline="true" :model="serachCondition">
-          <el-form-item label="学校" class="marginRight">
+        <el-form :inline="true" :model="serachCondition" ref="searchForm">
+          <el-form-item prop="school" label="学校" class="marginRight">
             <el-input
               v-model="serachCondition.school"
               placeholder="按学校搜索"
             ></el-input> </el-form-item
-          ><el-form-item label="学 / 工号" class="marginRight">
+          ><el-form-item prop="studentnumber" label="学 / 工号" class="marginRight">
             <el-input
               v-model="serachCondition.studentnumber"
               placeholder="按学/工号搜索"
             ></el-input>
           </el-form-item>
-          <el-form-item label="姓名" class="marginRight">
+          <el-form-item prop="name" label="姓名" class="marginRight">
             <el-input
               v-model="serachCondition.name"
               placeholder="按姓名搜索"
             ></el-input>
           </el-form-item>
-
+          <el-form-item prop="power" label="身份" class="marginRight">
+            <el-select v-model="serachCondition.power" placeholder="请选择">
+              <el-option label="学生" value="学生"></el-option>
+              <el-option label="教师" value="教师"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item class="marginRight">
             <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button @click="resetForm('searchForm')">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -92,6 +98,7 @@ export default {
         school: "",
         name: "",
         studentnumber: "",
+        power: "学生",
       },
     };
   },
@@ -160,6 +167,9 @@ export default {
     onSubmit() {
       this.currentPage = 1;
       this.scoreSearch();
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
     },
   },
 };
