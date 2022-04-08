@@ -162,7 +162,7 @@ const scoreContent = (req, res) => {
 // 输出所有学生分数
 const allScore = (req, res) => {
     var { currentPage  } = req.query
-    let pageSize = 12
+    let pageSize = 10
     var indexPage = (currentPage - 1) * pageSize
     // id = parseInt(id)
     // var sql = 'select * from userscore order by id desc';select * from table limit (currentPage-1)*pageSize,pageSize

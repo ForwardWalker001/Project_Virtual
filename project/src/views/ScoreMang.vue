@@ -7,13 +7,35 @@
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item>成绩分析</el-breadcrumb-item>
         </el-breadcrumb>
-      <!-- 搜索区 -->
-      <div>
-        
       </div>
+      <!-- 搜索区 -->
+      <div class="demo-form-inline">
+        <el-form :inline="true" :model="serachCondition">
+          <el-form-item label="学校" class="marginRight">
+            <el-input
+              v-model="serachCondition.school"
+              placeholder="按学校搜索"
+            ></el-input> </el-form-item
+          ><el-form-item label="学 / 工号" class="marginRight">
+            <el-input
+              v-model="serachCondition.studentnumber"
+              placeholder="按学/工号搜索"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="姓名" class="marginRight">
+            <el-input
+              v-model="serachCondition.name"
+              placeholder="按姓名搜索"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item class="marginRight">
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
+        </el-form>
       </div>
       <!-- 表格区 -->
-      <div  class="tableContent">
+      <div class="tableContent">
         <el-table :data="tableData" stripe style="width: 100%">
           <el-table-column
             property="school"
@@ -44,10 +66,11 @@
       </div>
       <!-- 分页 -->
       <div class="paginationContainer">
-        <el-pagination class="elPage"
+        <el-pagination
+          class="elPage"
           background
           layout="prev, pager, next"
-          :page-size="12"
+          :page-size="10"
           :total="total"
           :current-page="currentPage"
           @current-change="handleCurrentChange"
@@ -65,44 +88,52 @@ export default {
       tableData: [],
       currentPage: 1,
       total: 0,
+      serachCondition: {
+        school: "",
+        name: "",
+        studentnumber: "",
+      },
     };
   },
   mounted() {
-    this.scoreContent();
+    // this.scoreContent();
     this.scoreSearch();
   },
   methods: {
     // 获取总条数
-    scoreContent() {
-      this.$axios
-        .get(`/scoreContent`)
-        .then((res) => {
-          let { code, msg } = res.data;
-          if (code == 200) {
-            this.total = res.data.data;
-          } else {
-            this.$message({
-              showClose: true,
-              message: msg,
-              type: "warning",
-            });
-          }
-        })
-        .catch((err) => {
-          this.$message({
-            showClose: true,
-            message: "获取总条数失败: " + err,
-            type: "warning",
-          });
-        });
-    },
+    // scoreContent() {
+    //   this.$axios
+    //     .get(`/scoreContent`)
+    //     .then((res) => {
+    //       let { code, msg } = res.data;
+    //       if (code == 200) {
+    //         this.total = res.data.data;
+    //       } else {
+    //         this.$message({
+    //           showClose: true,
+    //           message: msg,
+    //           type: "warning",
+    //         });
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       this.$message({
+    //         showClose: true,
+    //         message: "获取总条数失败: " + err,
+    //         type: "warning",
+    //       });
+    //     });
+    // },
     scoreSearch() {
       this.$axios
-        .get(`/allScore?currentPage=${this.currentPage}`)
+        .get(`/allScore?currentPage=${this.currentPage}`, {
+          params: this.serachCondition,
+        })
         .then((res) => {
           let { code, msg } = res.data;
           if (code == 200) {
             this.tableData = res.data.data;
+            this.total = res.data.total;
             // console.log(this.tableData,'===')
           } else {
             this.$message({
@@ -122,6 +153,12 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
+      // 如果
+      this.scoreSearch();
+    },
+
+    onSubmit() {
+      this.currentPage = 1;
       this.scoreSearch();
     },
   },
@@ -141,9 +178,8 @@ export default {
   width: 95%;
   min-height: 100%;
   margin: 0 auto;
-  
-  position: relative;
 
+  position: relative;
 }
 .tableContent {
   padding-bottom: 25px;
@@ -153,5 +189,11 @@ export default {
   position: absolute;
   bottom: 10px;
   right: 10px;
+}
+.demo-form-inline {
+  margin-top: 20px;
+}
+.marginRight {
+  margin-right: 20px !important;
 }
 </style>
