@@ -179,6 +179,7 @@ export default {
 
               setStorage('userInfo', {
                 'id': res.data.id,
+                'school': this.loginForm.school,
                 'username': this.loginForm.studentnumber,
                 'userPower':  res.data.power
               }, 0.5)
@@ -241,6 +242,7 @@ export default {
 
               setStorage('userInfo', {
                 'id': res.data.id,
+                'school': this.ruleForm.school,
                 'username': this.ruleForm.studentnumber,
                 'userPower':  res.data.power
               }, 0.5)

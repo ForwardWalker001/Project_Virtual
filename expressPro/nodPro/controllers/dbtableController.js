@@ -1,5 +1,6 @@
 var dbConfig = require('../util/dbconfig.js')
 var changDate = require('../util/dateUtil.js')
+
 // 登录
 const login = (req, res) => {
     let { school, studentnumber, password } = req.body

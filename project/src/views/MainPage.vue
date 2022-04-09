@@ -229,12 +229,11 @@
             </el-table>
           </el-dialog>
         </div>
-        <div v-if="userPower == 0" style="margin-bottom: 10px">
+        <div v-if="userPower !== 2" style="margin-bottom: 10px">
           <el-button type="success" plain @click="toScoreMang"
             >查看成绩分析</el-button
           >
         </div>
-        <div v-if="userPower == 1"></div>
       </div>
     </div>
   </div>

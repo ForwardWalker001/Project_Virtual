@@ -50,7 +50,7 @@
           ></el-table-column>
           <el-table-column
             property="studentnumber"
-            label="学号"
+            label="学/工号"
             min-width="20%"
           ></el-table-column>
           <el-table-column
@@ -88,6 +88,7 @@
 </template>
 
 <script>
+import { getStorage } from "../util/StorageMan";
 export default {
   data() {
     return {
@@ -95,7 +96,7 @@ export default {
       currentPage: 1,
       total: 0,
       serachCondition: {
-        school: "",
+        school: getStorage("userInfo") ? getStorage("userInfo").school : "",
         name: "",
         studentnumber: "",
         power: "学生",
@@ -170,6 +171,8 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+      this.currentPage = 1;
+      this.scoreSearch();
     },
   },
 };
