@@ -50,7 +50,7 @@ export default {
     return {
       title: "多风机展示",
       isShow: false,
-      electricTitle: '启动电机',
+      electricTitle: "启动电机",
       TE: null,
     };
   },
@@ -62,25 +62,10 @@ export default {
     TE.addObject(...LightsList);
     TE.addObject(...helperList);
 
-    this.frames = {
-      frame1: null,
-      frame2: null,
-      frame3: null,
-    };
     this.frameArr = [];
     this.addFrames(0, 0, 0);
-
-    // this.openShow()
   },
-  watch: {
-    //   isShow: function(newVal) {
-    //       if(newVal){
-    //         //   this.frameArr = []
-    //       }else{
-    //         //   this.frameArr = []
-    //       }
-    //   }
-  },
+  watch: {},
   methods: {
     // 改变旋转中心
     changePivot(x, y, z, obj) {
@@ -91,16 +76,15 @@ export default {
       return wrapper;
     },
     openElectric() {
-        if(!this.TE.openElectric){
-            this.electricTitle = '关闭电机'
-            this.TE.openElectric = true
-        }else{
-            this.electricTitle = '启动电机'
-            this.TE.openElectric = false
-        }  
+      if (!this.TE.openElectric) {
+        this.electricTitle = "关闭电机";
+        this.TE.openElectric = true;
+      } else {
+        this.electricTitle = "启动电机";
+        this.TE.openElectric = false;
+      }
     },
     openShow() {
-        console.log(this.isShow)
       if (!this.isShow) {
         this.title = "单风机展示";
         this.isShow = true;
@@ -118,33 +102,51 @@ export default {
         this.isShow = false;
 
         this.TE.Fanblades.forEach((item, index) => {
-          if (index == 0)item.visible = true;
-          else{
-              item.visible = false;
+          if (index == 0) item.visible = true;
+          else {
+            item.visible = false;
           }
         });
         this.TE.cylinder.forEach((item, index) => {
           if (index == 0) item.visible = true;
-          else{
-              item.visible = false;
+          else {
+            item.visible = false;
           }
         });
         this.TE.fanBox.forEach((item, index) => {
           if (index == 0) item.visible = true;
-          else{
-              item.visible = false;
+          else {
+            item.visible = false;
           }
         });
       }
     },
     // 加载风电模型
     addFrames(x, y, z) {
+      let line1Obj = {
+        frame1: null,
+        frame2: null,
+        frame3: null,
+      };
+      let line2Obj = {
+        frame1: null,
+        frame2: null,
+        frame3: null,
+      };
+      let line3Obj = {
+        frame1: null,
+        frame2: null,
+        frame3: null,
+      };
       framePromise.then((frame) => {
         // 改变转机旋转中心
         let obj1 = this.changePivot(0.25, 45.9, 0, frame);
         obj1.position.set(x, y + 45.9, z);
 
-        this.frames.frame1 = obj1.clone();
+        line1Obj.frame1 = obj1.clone();
+        line2Obj.frame1 = obj1.clone();
+        line3Obj.frame1 = obj1.clone();
+
         // obj1.visible = false
         this.TE.Fanblades.push(obj1);
         this.TE.addObject(obj1);
@@ -152,38 +154,47 @@ export default {
       framePromise2.then((frame) => {
         frame.position.set(x, y, z);
 
-        this.frames.frame2 = frame.clone();
+        line1Obj.frame2 = frame.clone();
+        line2Obj.frame2 = frame.clone();
+        line3Obj.frame2 = frame.clone();
+
         this.TE.cylinder.push(frame);
         this.TE.addObject(frame);
       });
       framePromise3.then((frame) => {
         frame.position.set(x, y, z);
         // frame.visible = false
-        this.frames.frame3 = frame.clone();
+        line1Obj.frame3 = frame.clone();
+        line2Obj.frame3 = frame.clone();
+        line3Obj.frame3 = frame.clone();
         this.TE.fanBox.push(frame);
         this.TE.addObject(frame);
 
-        this.showCount = 5;
-        this.createFrames(160, 0, 0, this.frames);
+        this.line1 = 5;
+        this.createFramesLine1(160, 0, 100, line1Obj);
+        this.line2 = 5;
+        this.createFramesLine2(160, 0, 0, line2Obj);
+        this.line3 = 5;
+        this.createFramesLine3(160, 0, -100, line3Obj);
       });
     },
 
-    createFrames(x, y, z, obj) {
-      if (this.showCount <= 0) return;
+    createFramesLine2(x, y, z, obj) {
+      if (this.line2 <= 0) return;
       obj.frame1.position.set(x, y + 45.9, z);
-      obj.frame1.visible = false
+      obj.frame1.visible = false;
       let obj1 = obj.frame1.clone();
       this.TE.Fanblades.push(obj.frame1);
       this.TE.addObject(obj.frame1);
 
       obj.frame2.position.set(x, y, z);
-      obj.frame2.visible = false
+      obj.frame2.visible = false;
       let obj2 = obj.frame2.clone();
       this.TE.cylinder.push(obj.frame2);
       this.TE.addObject(obj.frame2);
 
       obj.frame3.position.set(x, y, z);
-      obj.frame3.visible = false
+      obj.frame3.visible = false;
       let obj3 = obj.frame3.clone();
       this.TE.fanBox.push(obj.frame3);
       this.TE.addObject(obj.frame3);
@@ -193,8 +204,64 @@ export default {
         frame2: obj2,
         frame3: obj3,
       };
-      this.showCount--;
-      this.createFrames(x - 80, y, z, frame);
+      this.line2--;
+      this.createFramesLine2(x - 80, y, z, frame);
+    },
+    createFramesLine1(x, y, z, obj) {
+      if (this.line1 <= 0) return;
+      obj.frame1.position.set(x, y + 45.9, z);
+      obj.frame1.visible = false;
+      let obj1 = obj.frame1.clone();
+      this.TE.Fanblades.push(obj.frame1);
+      this.TE.addObject(obj.frame1);
+
+      obj.frame2.position.set(x, y, z);
+      obj.frame2.visible = false;
+      let obj2 = obj.frame2.clone();
+      this.TE.cylinder.push(obj.frame2);
+      this.TE.addObject(obj.frame2);
+
+      obj.frame3.position.set(x, y, z);
+      obj.frame3.visible = false;
+      let obj3 = obj.frame3.clone();
+      this.TE.fanBox.push(obj.frame3);
+      this.TE.addObject(obj.frame3);
+
+      let frame = {
+        frame1: obj1,
+        frame2: obj2,
+        frame3: obj3,
+      };
+      this.line1--;
+      this.createFramesLine1(x - 80, y, z, frame);
+    },
+    createFramesLine3(x, y, z, obj) {
+      if (this.line3 <= 0) return;
+      obj.frame1.position.set(x, y + 45.9, z);
+      obj.frame1.visible = false;
+      let obj1 = obj.frame1.clone();
+      this.TE.Fanblades.push(obj.frame1);
+      this.TE.addObject(obj.frame1);
+
+      obj.frame2.position.set(x, y, z);
+      obj.frame2.visible = false;
+      let obj2 = obj.frame2.clone();
+      this.TE.cylinder.push(obj.frame2);
+      this.TE.addObject(obj.frame2);
+
+      obj.frame3.position.set(x, y, z);
+      obj.frame3.visible = false;
+      let obj3 = obj.frame3.clone();
+      this.TE.fanBox.push(obj.frame3);
+      this.TE.addObject(obj.frame3);
+
+      let frame = {
+        frame1: obj1,
+        frame2: obj2,
+        frame3: obj3,
+      };
+      this.line3--;
+      this.createFramesLine3(x - 80, y, z, frame);
     },
   },
 };
