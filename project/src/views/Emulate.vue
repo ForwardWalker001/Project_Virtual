@@ -1,82 +1,217 @@
 <template>
-    <div class="main" ref='threeTarget'>
-        <!-- <iframe src="static/hightopo/demo2/Fan3d-magic.html" frameborder="0" width="100%" height="100%"></iframe> -->
-        <!-- 123123 -->
-        <div class="openObj">
-            <!-- <span>123</span> -->
-            <el-button type="success" size="medium" style="margin-right:20px" @click="openElectric ">启动电机</el-button>
-            <el-button type="warning" size="medium" @click="()=>{TE.openElectric=false}">关闭电机</el-button>
-        </div>
+  <div class="main" ref="threeTarget">
+    <div class="openObj">
+      <el-button
+        type="primary"
+        size="medium"
+        style="margin-right: 20px"
+        @click="openShow"
+      >
+        {{ title }}
+      </el-button>
+      <el-button
+        type="success"
+        size="medium"
+        style="margin-right: 20px"
+        @click="openElectric"
+        >{{ electricTitle }}</el-button
+      >
+      <!-- <el-button
+        type="warning"
+        size="medium"
+        @click="
+          () => {
+            TE.openElectric = false;
+          }
+        "
+        >关闭电机</el-button
+      > -->
     </div>
+  </div>
 </template>
 
 <script>
 // import { Material, Mesh, WebGLRenderer } from 'three'
-import { TEngine } from '../assets/js/TEngine.js'
-import { basicObjectList } from '../assets/js/TBasicObject'
-import { LightsList } from '../assets/js/Tlights'
-import { helperList } from '../assets/js/THelper'
+import { TEngine } from "../assets/js/TEngine.js";
+import { basicObjectList } from "../assets/js/TBasicObject";
+import { LightsList } from "../assets/js/Tlights";
+import { helperList } from "../assets/js/THelper";
+// import { deep } from "../assets/js/utils"
+import {
+  framePromise,
+  framePromise2,
+  framePromise3,
+} from "../assets/js/TLoadModel";
 
-import { framePromise, framePromise2, framePromise3 } from '../assets/js/TLoadModel'
-
-import { Object3D } from 'three'
+import { Object3D } from "three";
 
 export default {
-    data(){
-        return {
-            TE : null
-        }
+  data() {
+    return {
+      title: "多风机展示",
+      isShow: false,
+      electricTitle: '启动电机',
+      TE: null,
+    };
+  },
+  mounted() {
+    const threeTarget = this.$refs.threeTarget;
+    const TE = new TEngine(threeTarget);
+    this.TE = TE;
+    TE.addObject(...basicObjectList);
+    TE.addObject(...LightsList);
+    TE.addObject(...helperList);
+
+    this.frames = {
+      frame1: null,
+      frame2: null,
+      frame3: null,
+    };
+    this.frameArr = [];
+    this.addFrames(0, 0, 0);
+
+    // this.openShow()
+  },
+  watch: {
+    //   isShow: function(newVal) {
+    //       if(newVal){
+    //         //   this.frameArr = []
+    //       }else{
+    //         //   this.frameArr = []
+    //       }
+    //   }
+  },
+  methods: {
+    // 改变旋转中心
+    changePivot(x, y, z, obj) {
+      let wrapper = new Object3D();
+      wrapper.position.set(x, y, z);
+      wrapper.add(obj);
+      obj.position.set(-x, -y, -z);
+      return wrapper;
     },
-    mounted(){
-        const threeTarget = this.$refs.threeTarget
-        const TE = new TEngine(threeTarget)
-        this.TE = TE
-        TE.addObject(...basicObjectList)
-        TE.addObject(...LightsList)
-        TE.addObject(...helperList)
-        
-        framePromise.then(frame => {
-            let obj1 = this.changePivot(0.25,45.9,0, frame)
-            TE.Fanblade = obj1
-            TE.addObject(obj1)
-        })
-        framePromise2.then(frame => {
-            // TE.cylinder = frame
-            TE.addObject(frame)
-        })
-        framePromise3.then(frame => {
-            TE.cylinder = frame
-            TE.addObject(frame)
-        })
-    },
-    methods: {
-        // 改变旋转中心
-        changePivot(x,y,z,obj){
-            let wrapper = new Object3D();
-            wrapper.position.set(x,y,z);
-            wrapper.add(obj);
-            obj.position.set(-x,-y,-z);
-            return wrapper;
-        },
-        openElectric() {
+    openElectric() {
+        if(!this.TE.openElectric){
+            this.electricTitle = '关闭电机'
             this.TE.openElectric = true
-        }
-    }
-}
+        }else{
+            this.electricTitle = '启动电机'
+            this.TE.openElectric = false
+        }  
+    },
+    openShow() {
+        console.log(this.isShow)
+      if (!this.isShow) {
+        this.title = "单风机展示";
+        this.isShow = true;
+        this.TE.Fanblades.forEach((item) => {
+          item.visible = true;
+        });
+        this.TE.cylinder.forEach((item) => {
+          item.visible = true;
+        });
+        this.TE.fanBox.forEach((item) => {
+          item.visible = true;
+        });
+      } else {
+        this.title = "多风机展示";
+        this.isShow = false;
+
+        this.TE.Fanblades.forEach((item, index) => {
+          if (index == 0)item.visible = true;
+          else{
+              item.visible = false;
+          }
+        });
+        this.TE.cylinder.forEach((item, index) => {
+          if (index == 0) item.visible = true;
+          else{
+              item.visible = false;
+          }
+        });
+        this.TE.fanBox.forEach((item, index) => {
+          if (index == 0) item.visible = true;
+          else{
+              item.visible = false;
+          }
+        });
+      }
+    },
+    // 加载风电模型
+    addFrames(x, y, z) {
+      framePromise.then((frame) => {
+        // 改变转机旋转中心
+        let obj1 = this.changePivot(0.25, 45.9, 0, frame);
+        obj1.position.set(x, y + 45.9, z);
+
+        this.frames.frame1 = obj1.clone();
+        // obj1.visible = false
+        this.TE.Fanblades.push(obj1);
+        this.TE.addObject(obj1);
+      });
+      framePromise2.then((frame) => {
+        frame.position.set(x, y, z);
+
+        this.frames.frame2 = frame.clone();
+        this.TE.cylinder.push(frame);
+        this.TE.addObject(frame);
+      });
+      framePromise3.then((frame) => {
+        frame.position.set(x, y, z);
+        // frame.visible = false
+        this.frames.frame3 = frame.clone();
+        this.TE.fanBox.push(frame);
+        this.TE.addObject(frame);
+
+        this.showCount = 5;
+        this.createFrames(160, 0, 0, this.frames);
+      });
+    },
+
+    createFrames(x, y, z, obj) {
+      if (this.showCount <= 0) return;
+      obj.frame1.position.set(x, y + 45.9, z);
+      obj.frame1.visible = false
+      let obj1 = obj.frame1.clone();
+      this.TE.Fanblades.push(obj.frame1);
+      this.TE.addObject(obj.frame1);
+
+      obj.frame2.position.set(x, y, z);
+      obj.frame2.visible = false
+      let obj2 = obj.frame2.clone();
+      this.TE.cylinder.push(obj.frame2);
+      this.TE.addObject(obj.frame2);
+
+      obj.frame3.position.set(x, y, z);
+      obj.frame3.visible = false
+      let obj3 = obj.frame3.clone();
+      this.TE.fanBox.push(obj.frame3);
+      this.TE.addObject(obj.frame3);
+
+      let frame = {
+        frame1: obj1,
+        frame2: obj2,
+        frame3: obj3,
+      };
+      this.showCount--;
+      this.createFrames(x - 80, y, z, frame);
+    },
+  },
+};
 </script>
 
 <style scoped>
 .main {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 .openObj {
-    position: absolute;
-    left: 100px;
-    bottom: 15px;
-    z-index: 100;
-    color: red;
+  position: absolute;
+  left: 50px;
+  bottom: 15px;
+  z-index: 100;
+  color: red;
 }
 </style>

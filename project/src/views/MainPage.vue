@@ -39,7 +39,7 @@
     <div class="item" id="Alisa">
       <div class="title"></div>
       <div class="content index">
-        <h1>风电虚拟仿真实验</h1>
+        <h1>风力发电虚拟仿真实验</h1>
         <div class="detail">
           <span>学校： 湖南科技大学</span>
           <span style="margin-left: 50px">负责人： 彭宇祥</span>
@@ -363,7 +363,17 @@ export default {
       }
     },
     toScoreMang() {
-      this.$router.push("/ScoreMang");
+      if (!this.isLogin) {
+        this.$message({
+          showClose: true,
+          message: "你还未登录，请先登录或注册",
+          type: "warning",
+          duration: 2000,
+        });
+      }else {
+        this.$router.push("/ScoreMang");
+      }
+      
     },
     // 防抖
     debounce(fn, delay) {
@@ -455,9 +465,9 @@ export default {
   height: 1px;
   border-top: 1px solid #2defc275;
 }
-.title {
+/* .title {
   /* background: #4395ff; */
-}
+/* }  */
 .content {
   width: 80%;
 }

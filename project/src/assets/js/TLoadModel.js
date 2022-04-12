@@ -5,7 +5,6 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 
 const objLoader = new OBJLoader()
 
-// export let Fanblade =  
 export const framePromise = new Promise((resolve, reject) => {
   objLoader.loadAsync('/转头.obj').then(group => {
     const frame = group.children[0]
@@ -15,12 +14,6 @@ export const framePromise = new Promise((resolve, reject) => {
       // roughnessMap: frameRoughnessTexture,
       // bumpMap: frameDispTexture
     })
-
-    frame.position.y = 0
-    frame.position.z = 0
-    frame.position.x = 0
-    // frame.rotation.x = Math.PI / 180 * -90
-    // frame.scale.set(2, 2, 2)
 
     resolve(frame)
   }).catch(err => {
@@ -38,12 +31,6 @@ export const framePromise2 = new Promise((resolve, reject) => {
       // bumpMap: frameDispTexture
     })
 
-    frame.position.y = 0
-    frame.position.z = 0
-    frame.position.x = 0
-    // frame.rotation.x = Math.PI / 180 * -90
-    // frame.scale.set(2, 2, 2)
-
     resolve(frame)
   }).catch(err => {
     reject(err)
@@ -60,9 +47,9 @@ export const framePromise3 = new Promise((resolve, reject) => {
       // bumpMap: frameDispTexture
     })
 
-    frame.position.y = 0
-    frame.position.z = 0
-    frame.position.x = 0
+    // frame.position.y = 0
+    // frame.position.z = 0
+    // frame.position.x = 0
     // frame.rotation.x = Math.PI / 180 * -90
     // frame.scale.set(2, 2, 2)
 

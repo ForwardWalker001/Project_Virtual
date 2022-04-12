@@ -13,7 +13,7 @@ export const basicObjectList = []
 
 // 地面
 export const stage = new Mesh(
-  new BoxBufferGeometry(600, 10, 400),
+  new BoxBufferGeometry(800, 10, 800),
   new MeshStandardMaterial({
     color: 'rgb(0, 75, 75)',
     roughness: 0

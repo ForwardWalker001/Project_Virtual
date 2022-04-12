@@ -1,4 +1,4 @@
-import { 
+import {
 
   PerspectiveCamera,
   Scene,
@@ -9,14 +9,13 @@ import {
   // Raycaster
 } from "three"
 
-  import Stats from 'three/examples/jsm/libs/stats.module'
-  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-  // import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
+import Stats from 'three/examples/jsm/libs/stats.module'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+// import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 
 export class TEngine {
 
-
-  constructor (dom) {
+  constructor(dom) {
     this.dom = dom
     const renderer = new WebGLRenderer({
       antialias: true
@@ -27,18 +26,25 @@ export class TEngine {
     const scene = new Scene()
     this.camera = new PerspectiveCamera(45, dom.offsetWidth / dom.offsetHeight, 1, 1000)
 
-    this.camera.position.set(50, 100 ,-50)
+    this.camera.position.set(50, 100, -50)
     this.camera.lookAt(new Vector3(0, 0, 0))
     this.camera.up = new Vector3(0, 1, 0)
 
+    // 转动速度
+    this.speed = 0.01
     // 扇叶
-    this.Fanblade = null
+    this.Fanblades = []
     // 扇枉
-    // this.cylinder = null
+    this.cylinder = []
+    // 扇箱
+    this.fanBox = []
+    // 是否启动电机
     this.openElectric = false
+    // 是否多风机展示
+    this.isShow = false
 
     renderer.setSize(dom.offsetWidth, dom.offsetHeight, true)
-    
+
     // 初始性能监视器
     const stats = Stats()
     const statsDom = stats.domElement
@@ -55,12 +61,16 @@ export class TEngine {
     //   RIGHT: MOUSE.ROTATE
     // }
 
-    
+
     const renderFun = () => {
       orbitControls.update()
-      if(this.Fanblade && this.openElectric){
-        this.Fanblade.rotation.z += 0.01
+      if (this.Fanblades.length >= 1 && this.openElectric) {
+        this.Fanblades.forEach((item) => {
+
+          item.rotation.z += this.speed
+        })
       }
+      
       renderer.render(scene, this.camera)
       stats.update()
       requestAnimationFrame(renderFun)
@@ -78,7 +88,7 @@ export class TEngine {
     // this.mouse = mouse
     // this.raycaster = raycaster
   }
-  addObject (...object) {
+  addObject(...object) {
     object.forEach(elem => {
       this.scene.add(elem)
     })
