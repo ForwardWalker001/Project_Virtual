@@ -26,7 +26,7 @@ export class TEngine {
     const scene = new Scene()
     this.camera = new PerspectiveCamera(45, dom.offsetWidth / dom.offsetHeight, 1, 1000)
 
-    this.camera.position.set(20, 90, -100)
+    this.camera.position.set(20, 91, -100)
     this.camera.lookAt(new Vector3(0, 50, 0))
     this.camera.up = new Vector3(0, 1, 0)
 

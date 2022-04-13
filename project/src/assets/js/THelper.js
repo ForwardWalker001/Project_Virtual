@@ -23,4 +23,4 @@ const spotLightHelper = new SpotLightHelper(spotLight, spotLight.color)
 spotLightHelper.raycast = () => {}
 
 // helperList.push(axesHelper, spotLightHelper, gridHelper)
-helperList.push(axesHelper, gridHelper)
+helperList.push( gridHelper)

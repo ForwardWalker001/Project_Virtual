@@ -102,7 +102,7 @@ export default {
       } else {
         this.title = "多风机展示";
         this.isShow = false;
-        this.TE.camera.position.set(20, 90, -100)
+        this.TE.camera.position.set(20, 91, -100)
         // setInterCamera(20, 90, -100, this.TE.camera)
         this.TE.Fanblades.forEach((item, index) => {
           if (index == 0) item.visible = true;
