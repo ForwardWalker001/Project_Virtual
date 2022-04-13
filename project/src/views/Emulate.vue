@@ -36,7 +36,7 @@ import { TEngine } from "../assets/js/TEngine.js";
 import { basicObjectList } from "../assets/js/TBasicObject";
 import { LightsList } from "../assets/js/Tlights";
 import { helperList } from "../assets/js/THelper";
-// import { deep } from "../assets/js/utils"
+import { setInterCamera } from "../assets/js/utils"
 import {
   framePromise,
   framePromise2,
@@ -88,6 +88,8 @@ export default {
       if (!this.isShow) {
         this.title = "单风机展示";
         this.isShow = true;
+        // this.TE.camera.position.set(190, 130, -190)
+        setInterCamera(190, 130, -190, this.TE.camera)
         this.TE.Fanblades.forEach((item) => {
           item.visible = true;
         });
@@ -100,7 +102,8 @@ export default {
       } else {
         this.title = "多风机展示";
         this.isShow = false;
-
+        this.TE.camera.position.set(20, 90, -100)
+        // setInterCamera(20, 90, -100, this.TE.camera)
         this.TE.Fanblades.forEach((item, index) => {
           if (index == 0) item.visible = true;
           else {
