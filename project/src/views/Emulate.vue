@@ -1,5 +1,6 @@
 <template>
   <div class="main" ref="threeTarget">
+    <img src="/schoolLogo.svg" alt="logo" class="schoolLogo">
     <div class="openObj">
       <el-button
         type="primary"
@@ -16,16 +17,7 @@
         @click="openElectric"
         >{{ electricTitle }}</el-button
       >
-      <!-- <el-button
-        type="warning"
-        size="medium"
-        @click="
-          () => {
-            TE.openElectric = false;
-          }
-        "
-        >关闭电机</el-button
-      > -->
+
     </div>
   </div>
 </template>
@@ -89,7 +81,7 @@ export default {
         this.title = "单风机展示";
         this.isShow = true;
         // this.TE.camera.position.set(190, 130, -190)
-        setInterCamera(190, 130, -190, this.TE.camera)
+        setInterCamera(190, 150, -200, this.TE.camera)
         this.TE.Fanblades.forEach((item) => {
           item.visible = true;
         });
@@ -283,5 +275,12 @@ export default {
   bottom: 15px;
   z-index: 100;
   color: red;
+}
+.schoolLogo {
+  width: 200px;
+  /* height: 50px; */
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 </style>

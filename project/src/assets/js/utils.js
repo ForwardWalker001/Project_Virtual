@@ -17,8 +17,8 @@ export const setInterCamera = (x , y, z, obj) => {
     obj.position.y += obj.position.y<y? 10: 0
     obj.position.z += obj.position.z>z? -15: 0
     if(obj.position.x>=x && obj.position.y>=y && obj.position.z<=z){
-      // console.log(1231231)
       clearInterval(timer)
     }
   }, 100)
+  
 }

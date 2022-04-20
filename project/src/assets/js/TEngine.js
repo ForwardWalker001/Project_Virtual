@@ -66,7 +66,6 @@ export class TEngine {
       orbitControls.update()
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
-
           item.rotation.z += this.speed
         })
       }
