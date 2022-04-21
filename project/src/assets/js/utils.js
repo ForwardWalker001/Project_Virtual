@@ -13,12 +13,12 @@ export const deep = (obj) => {
 export const setInterCamera = (x , y, z, obj) => {
   // obj.position.set(20, 50, -50)
   let timer = setInterval(()=>{
-    obj.position.x += obj.position.x<x? 20: 0
-    obj.position.y += obj.position.y<y? 10: 0
-    obj.position.z += obj.position.z>z? -15: 0
+    obj.position.x += obj.position.x<x? 10: 0
+    obj.position.y += obj.position.y<y? 5: 0
+    obj.position.z += obj.position.z>z? -8: 0
     if(obj.position.x>=x && obj.position.y>=y && obj.position.z<=z){
       clearInterval(timer)
     }
-  }, 100)
+  }, 60)
   
 }

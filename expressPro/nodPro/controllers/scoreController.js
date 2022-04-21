@@ -3,7 +3,7 @@ var changDate = require('../util/dateUtil.js')
 
 // 根据条件筛选分数
 const conditionScore = (req, res) => {
-    var { currentPage, school, name, studentnumber, power } = req.query
+    var { currentPage, school, name, studentnumber, power, type } = req.query
     let pageSize = 10
     var indexPage = (currentPage - 1) * pageSize
     let sql1 = ''
@@ -40,16 +40,18 @@ const conditionScore = (req, res) => {
         }
 
     }
-    // let sql0 = ''
-    // if (sqlArr.length != 0) sql0 = 'where '
-    var sql = `select * from userscore where ` + sql1 + sql2 + sql3 + ` order by cast(scoredate as datetime) desc ` + `limit ${indexPage},${pageSize}`
-    // console.log(sql)
-
+    let sql
+    var sqlTable = `select * from userscore where ` + sql1 + sql2 + sql3 + ` order by cast(scoredate as datetime) desc ` + `limit ${indexPage},${pageSize}`
+    var sqlChart = `select * from userscore where ` + sql1 + sql2 + sql3
+    if(type == 'Chart'){
+        sql = sqlChart
+    }else{
+        sql = sqlTable
+    }
     // 筛选的总条数 total
     function numCondition(sqlNum, sqlArr) {
         let callBack = async (err, data) => {
             let total = await data[0]["count(*)"]
-            console.log(total)
             var callBack1 = (err, data) => {
                 if (err) {
                     console.log('连接出错了', err)

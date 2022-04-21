@@ -36,13 +36,14 @@
           </el-form-item>
           <el-form-item class="marginRight">
             <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="success" @click="changType">{{ title }}</el-button>
             <el-button @click="resetForm('searchForm')">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
       <!-- 表格区 -->
-      <div class="tableContent">
-        <el-table :data="tableData" stripe style="width: 100%">
+      <div class="tableContent" >
+        <el-table v-if="showTable" :data="tableData" stripe style="width: 100%">
           <el-table-column
             property="school"
             label="学校"
@@ -69,9 +70,10 @@
             min-width="20%"
           ></el-table-column>
         </el-table>
+        <charts v-if="!showTable && showChart" :chartData="chartData"></charts>
       </div>
       <!-- 分页 -->
-      <div class="paginationContainer">
+      <div class="paginationContainer" v-if="showTable">
         <el-pagination
           class="elPage"
           background
@@ -89,17 +91,25 @@
 
 <script>
 import { getStorage } from "../util/StorageMan";
+import Charts from "../components/charts.vue";
+
 export default {
+  components: { Charts },
   data() {
     return {
       tableData: [],
+      chartData: [],
       currentPage: 1,
       total: 0,
+      showTable: true,
+      showChart: false,
+      title : '图表展示',
       serachCondition: {
         school: getStorage("userInfo") ? getStorage("userInfo").school : "",
         name: "",
         studentnumber: "",
         power: "学生",
+        type: ''
       },
     };
   },
@@ -108,31 +118,20 @@ export default {
     this.scoreSearch();
   },
   methods: {
-    // 获取总条数
-    // scoreContent() {
-    //   this.$axios
-    //     .get(`/scoreContent`)
-    //     .then((res) => {
-    //       let { code, msg } = res.data;
-    //       if (code == 200) {
-    //         this.total = res.data.data;
-    //       } else {
-    //         this.$message({
-    //           showClose: true,
-    //           message: msg,
-    //           type: "warning",
-    //         });
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       this.$message({
-    //         showClose: true,
-    //         message: "获取总条数失败: " + err,
-    //         type: "warning",
-    //       });
-    //     });
-    // },
+    changType() {
+      this.showTable = false
+      this.showChart = false
+      this.serachCondition.type = 'Chart'
+      this.scoreSearch()
+      setTimeout(()=>{
+        this.serachCondition.type = 'Table'
+        this.chartData = this.tableData
+        this.showChart = true
+        // console.log(this.tableData.length)
+      },10)
+    },
     scoreSearch() {
+      console.log(111)
       this.$axios
         .get(`/allScore?currentPage=${this.currentPage}`, {
           params: this.serachCondition,
@@ -142,7 +141,6 @@ export default {
           if (code == 200) {
             this.tableData = res.data.data;
             this.total = res.data.total;
-            // console.log(this.tableData,'===')
           } else {
             this.$message({
               showClose: true,
@@ -161,15 +159,16 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      // 如果
       this.scoreSearch();
     },
 
     onSubmit() {
       this.currentPage = 1;
+      this.showTable = true
       this.scoreSearch();
     },
     resetForm(formName) {
+      this.showTable = true
       this.$refs[formName].resetFields()
       this.currentPage = 1;
       this.scoreSearch();
@@ -182,9 +181,6 @@ export default {
 .cardBox {
   width: 100%;
   height: 95%;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
   padding-top: 20px;
 }
 .box-table {

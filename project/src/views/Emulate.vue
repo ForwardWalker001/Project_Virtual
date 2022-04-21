@@ -1,6 +1,17 @@
 <template>
   <div class="main" ref="threeTarget">
     <img src="/schoolLogo.svg" alt="logo" class="schoolLogo">
+    <div class="showBox">
+      <el-card class="box-card">
+        <span style="margin:10px 10px;">选择环境风速：</span>
+        <el-select v-model="TEspeed"
+        @change="(val)=>{TE.speed = parseFloat(val);}">
+          <el-option label="一级" value="0.01"></el-option>
+          <el-option label="二级" value="0.03"></el-option>
+          <el-option label="三级" value="0.05"></el-option>
+        </el-select>
+      </el-card>
+    </div>
     <div class="openObj">
       <el-button
         type="primary"
@@ -44,6 +55,7 @@ export default {
       isShow: false,
       electricTitle: "启动电机",
       TE: null,
+      TEspeed: '一级'
     };
   },
   mounted() {
@@ -80,6 +92,7 @@ export default {
       if (!this.isShow) {
         this.title = "单风机展示";
         this.isShow = true;
+        
         // this.TE.camera.position.set(190, 130, -190)
         setInterCamera(190, 150, -200, this.TE.camera)
         this.TE.Fanblades.forEach((item) => {
@@ -94,7 +107,7 @@ export default {
       } else {
         this.title = "多风机展示";
         this.isShow = false;
-        this.TE.camera.position.set(20, 91, -100)
+        this.TE.camera.position.set(15, 91, -100)
         // setInterCamera(20, 90, -100, this.TE.camera)
         this.TE.Fanblades.forEach((item, index) => {
           if (index == 0) item.visible = true;
@@ -268,6 +281,7 @@ export default {
   height: 100%;
   overflow: hidden;
   position: relative;
+  user-select: none!important;
 }
 .openObj {
   position: absolute;
@@ -275,6 +289,21 @@ export default {
   bottom: 15px;
   z-index: 100;
   color: red;
+}
+.showBox {
+  position: absolute;
+  
+}
+.box-card {
+  width: 400px;
+  position: absolute;
+  top: 100px;
+  left: 20px;
+  /* opacity: 0.8; */
+  background:rgba(255,255,255,0.8);
+}
+::v-deep .el-select,.el-input,.el-input__inner{
+  opacity: 0.8;
 }
 .schoolLogo {
   width: 200px;
