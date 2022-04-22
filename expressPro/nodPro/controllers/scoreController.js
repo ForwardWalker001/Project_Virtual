@@ -36,7 +36,7 @@ const conditionScore = (req, res) => {
         if(power == '学生'){
             sql3 = 'power=2'
         }else if(power == '教师'){
-            sql3 = 'power=1'
+            sql3 = 'power<=1'
         }
 
     }

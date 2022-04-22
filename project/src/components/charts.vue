@@ -121,7 +121,7 @@ export default {
 .tableBox {
   width: 361px;
   float: left;
-  margin-left: 80px;
+  margin-left: 120px;
   margin-top: 80px;
 }
 .chartContent {
