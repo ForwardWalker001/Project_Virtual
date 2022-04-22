@@ -1,6 +1,12 @@
 <template>
   <div class="chart">
-    <div ref="Chart" style="width: 50%; height: 500px;margin:auto"></div>
+    <el-table :data="objData" stripe border class="tableBox">
+      <el-table-column prop="name" label="分数区分" width="180">
+      </el-table-column>
+      <el-table-column prop="value" label="人数" width="180"> </el-table-column>
+      <!-- <el-table-column prop="address" label="地址"> </el-table-column> -->
+    </el-table>
+    <div ref="Chart" class="chartContent"></div>
   </div>
 </template>
 
@@ -12,6 +18,7 @@ export default {
     return {
       chartInstance: null,
       option: {},
+      objData: [],
     };
   },
   mounted() {
@@ -23,21 +30,28 @@ export default {
   methods: {
     // 处理数据，变成符合 比例图的数据
     handleData() {
-      this.scoreDate = [0, 0, 0, 0, 0];
+      let scoreDate = [0, 0, 0, 0, 0];
       this.chartData.map((item) => {
         let val = parseInt(item.score);
         if (val >= 90) {
-          this.scoreDate[0]++;
+          scoreDate[0]++;
         } else if (val >= 80 && val < 90) {
-          this.scoreDate[1]++;
+          scoreDate[1]++;
         } else if (val >= 70 && val < 80) {
-          this.scoreDate[2]++;
+          scoreDate[2]++;
         } else if (val >= 60 && val < 70) {
-          this.scoreDate[3]++;
+          scoreDate[3]++;
         } else if (val > 0 && val < 60) {
-          this.scoreDate[4]++;
+          scoreDate[4]++;
         }
       });
+      this.objData = [
+        { value: scoreDate[0], name: "90分及以上" },
+        { value: scoreDate[1], name: "89至80分" },
+        { value: scoreDate[2], name: "79至70分" },
+        { value: scoreDate[3], name: "69至60分" },
+        { value: scoreDate[4], name: "不及格" },
+      ];
     },
     initChart() {
       this.chartInstance = echarts.init(this.$refs.Chart);
@@ -53,7 +67,7 @@ export default {
         },
         legend: {
           orient: "vertical",
-          left: "left",
+          left: "right",
           top: "bottom",
         },
         series: [
@@ -72,13 +86,7 @@ export default {
                 },
               },
             },
-            data: [
-              { value: this.scoreDate[0], name: "90分及以上" },
-              { value: this.scoreDate[1], name: "89至80分" },
-              { value: this.scoreDate[2], name: "79至70分" },
-              { value: this.scoreDate[3], name: "69至60分" },
-              { value: this.scoreDate[4], name: "不及格" },
-            ],
+            data: this.objData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -107,5 +115,19 @@ export default {
 <style scoped>
 .chart {
   margin-top: 20px;
+  /* display: flex;
+  justify-content: center; */
+}
+.tableBox {
+  width: 361px;
+  float: left;
+  margin-left: 80px;
+  margin-top: 80px;
+}
+.chartContent {
+  width: 50%;
+  height: 500px;
+  float: right;
+  margin-right: 80px;
 }
 </style>

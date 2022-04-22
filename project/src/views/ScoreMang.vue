@@ -128,7 +128,7 @@ export default {
         this.chartData = this.tableData
         this.showChart = true
         // console.log(this.tableData.length)
-      },10)
+      },20)
     },
     scoreSearch() {
       console.log(111)
@@ -165,10 +165,12 @@ export default {
     onSubmit() {
       this.currentPage = 1;
       this.showTable = true
+      this.showChart = false
       this.scoreSearch();
     },
     resetForm(formName) {
       this.showTable = true
+      this.showChart = false
       this.$refs[formName].resetFields()
       this.currentPage = 1;
       this.scoreSearch();
