@@ -1,9 +1,9 @@
 <template>
   <div class="chart">
     <el-table :data="objData" stripe border class="tableBox">
-      <el-table-column prop="name" label="分数区分" width="180">
+      <el-table-column prop="name" label="分数区分" width="200">
       </el-table-column>
-      <el-table-column prop="value" label="人数" width="180"> </el-table-column>
+      <el-table-column prop="value" label="人数" width="180"></el-table-column>
       <!-- <el-table-column prop="address" label="地址"> </el-table-column> -->
     </el-table>
     <div ref="Chart" class="chartContent"></div>
@@ -30,7 +30,7 @@ export default {
   methods: {
     // 处理数据，变成符合 比例图的数据
     handleData() {
-      let scoreDate = [0, 0, 0, 0, 0];
+      let scoreDate = [0, 0, 0, 0, 0, 0];
       this.chartData.map((item) => {
         let val = parseInt(item.score);
         if (val >= 90) {
@@ -45,12 +45,19 @@ export default {
           scoreDate[4]++;
         }
       });
+      scoreDate[5] =
+        scoreDate[0] +
+        scoreDate[1] +
+        scoreDate[2] +
+        scoreDate[3] +
+        scoreDate[4];
       this.objData = [
         { value: scoreDate[0], name: "90分及以上" },
         { value: scoreDate[1], name: "89至80分" },
         { value: scoreDate[2], name: "79至70分" },
         { value: scoreDate[3], name: "69至60分" },
-        { value: scoreDate[4], name: "不及格" },
+        { value: scoreDate[4], name: "不及格(0分不计入)" },
+        { value: scoreDate[5], name: "总人数" },
       ];
     },
     initChart() {
@@ -86,7 +93,7 @@ export default {
                 },
               },
             },
-            data: this.objData,
+            data: this.objData.slice(0,5),
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -119,7 +126,7 @@ export default {
   justify-content: center; */
 }
 .tableBox {
-  width: 361px;
+  width: 381px;
   float: left;
   margin-left: 120px;
   margin-top: 80px;

@@ -1,15 +1,30 @@
 <template>
   <div class="main" ref="threeTarget">
-    <img src="/schoolLogo.svg" alt="logo" class="schoolLogo">
+    <img src="/schoolLogo.svg" alt="logo" class="schoolLogo" />
     <div class="showBox">
       <el-card class="box-card">
-        <span style="margin:10px 10px;">选择环境风速：</span>
-        <el-select v-model="TEspeed"
-        @change="(val)=>{TE.speed = parseFloat(val);}">
+        <span style="margin: 10px 10px">改变环境风速：</span>
+        <el-select
+          v-model="TEspeed"
+          style="margin-bottom: 15px"
+          @change="
+            (val) => {
+              TE.speed = parseFloat(val);
+            }
+          "
+        >
           <el-option label="一级" value="0.01"></el-option>
           <el-option label="二级" value="0.03"></el-option>
           <el-option label="三级" value="0.05"></el-option>
         </el-select>
+        <span style="margin: 10px 26px">改变风向：</span>
+        <el-tooltip class="item" effect="dark" content="风机最大可转动正负60度" placement="top">
+        <el-input
+          v-model="changAngle"
+          placeholder="请输入角度"
+          style="width: 222px"
+          @change="changAngleFun"
+        ></el-input></el-tooltip>
       </el-card>
     </div>
     <div class="openObj">
@@ -28,7 +43,6 @@
         @click="openElectric"
         >{{ electricTitle }}</el-button
       >
-
     </div>
   </div>
 </template>
@@ -39,7 +53,7 @@ import { TEngine } from "../assets/js/TEngine.js";
 import { basicObjectList } from "../assets/js/TBasicObject";
 import { LightsList } from "../assets/js/Tlights";
 import { helperList } from "../assets/js/THelper";
-import { setInterCamera } from "../assets/js/utils"
+import { setInterCamera } from "../assets/js/utils";
 import {
   framePromise,
   framePromise2,
@@ -54,8 +68,9 @@ export default {
       title: "多风机展示",
       isShow: false,
       electricTitle: "启动电机",
+      changAngle: 0,
       TE: null,
-      TEspeed: '一级'
+      TEspeed: "一级",
     };
   },
   mounted() {
@@ -66,18 +81,24 @@ export default {
     TE.addObject(...LightsList);
     TE.addObject(...helperList);
 
-    this.frameArr = [];
+    // this.frameArr = [];
     this.addFrames(0, 0, 0);
   },
   watch: {},
   methods: {
     // 改变旋转中心
-    changePivot(x, y, z, obj) {
+    changePoint(x, y, z, obj) {
       let wrapper = new Object3D();
       wrapper.position.set(x, y, z);
       wrapper.add(obj);
       obj.position.set(-x, -y, -z);
       return wrapper;
+    },
+    changAngleFun() {
+      if (typeof parseFloat(this.changAngle)  === "number") {
+        this.TE.angle = (Math.PI / 180) * this.changAngle;
+        this.TE.changAngle = true;
+      }
     },
     openElectric() {
       if (!this.TE.openElectric) {
@@ -92,9 +113,9 @@ export default {
       if (!this.isShow) {
         this.title = "单风机展示";
         this.isShow = true;
-        
+
         // this.TE.camera.position.set(190, 130, -190)
-        setInterCamera(190, 150, -200, this.TE.camera)
+        setInterCamera(190, 150, -200, this.TE.camera);
         this.TE.Fanblades.forEach((item) => {
           item.visible = true;
         });
@@ -107,7 +128,7 @@ export default {
       } else {
         this.title = "多风机展示";
         this.isShow = false;
-        this.TE.camera.position.set(15, 91, -100)
+        this.TE.camera.position.set(15, 91, -100);
         // setInterCamera(20, 90, -100, this.TE.camera)
         this.TE.Fanblades.forEach((item, index) => {
           if (index == 0) item.visible = true;
@@ -148,8 +169,9 @@ export default {
       };
       framePromise.then((frame) => {
         // 改变转机旋转中心
-        let obj1 = this.changePivot(0.25, 45.9, 0, frame);
-        obj1.position.set(x, y + 45.9, z);
+        let obj1 = this.changePoint(0.3, 45.9, 0, frame);
+        obj1.position.set(x + 0.25, y + 45.9, z);
+        // obj1.rotation.y = Math.PI / 180 * 40
 
         line1Obj.frame1 = obj1.clone();
         line2Obj.frame1 = obj1.clone();
@@ -159,8 +181,10 @@ export default {
         this.TE.Fanblades.push(obj1);
         this.TE.addObject(obj1);
       });
+      // 柱
       framePromise2.then((frame) => {
-        frame.position.set(x, y, z);
+        frame.position.set(x, y, z + 2.5);
+        // frame.rotation.y = 45
 
         line1Obj.frame2 = frame.clone();
         line2Obj.frame2 = frame.clone();
@@ -171,7 +195,8 @@ export default {
       });
       framePromise3.then((frame) => {
         frame.position.set(x, y, z);
-        // frame.visible = false
+        // frame.rotation.y = 45
+
         line1Obj.frame3 = frame.clone();
         line2Obj.frame3 = frame.clone();
         line3Obj.frame3 = frame.clone();
@@ -189,13 +214,13 @@ export default {
 
     createFramesLine2(x, y, z, obj) {
       if (this.line2 <= 0) return;
-      obj.frame1.position.set(x, y + 45.9, z);
+      obj.frame1.position.set(x + 0.25, y + 45.9, z);
       obj.frame1.visible = false;
       let obj1 = obj.frame1.clone();
       this.TE.Fanblades.push(obj.frame1);
       this.TE.addObject(obj.frame1);
 
-      obj.frame2.position.set(x, y, z);
+      obj.frame2.position.set(x, y, z + 2.5);
       obj.frame2.visible = false;
       let obj2 = obj.frame2.clone();
       this.TE.cylinder.push(obj.frame2);
@@ -217,13 +242,13 @@ export default {
     },
     createFramesLine1(x, y, z, obj) {
       if (this.line1 <= 0) return;
-      obj.frame1.position.set(x, y + 45.9, z);
+      obj.frame1.position.set(x + 0.25, y + 45.9, z);
       obj.frame1.visible = false;
       let obj1 = obj.frame1.clone();
       this.TE.Fanblades.push(obj.frame1);
       this.TE.addObject(obj.frame1);
 
-      obj.frame2.position.set(x, y, z);
+      obj.frame2.position.set(x, y, z + 2.5);
       obj.frame2.visible = false;
       let obj2 = obj.frame2.clone();
       this.TE.cylinder.push(obj.frame2);
@@ -245,13 +270,13 @@ export default {
     },
     createFramesLine3(x, y, z, obj) {
       if (this.line3 <= 0) return;
-      obj.frame1.position.set(x, y + 45.9, z);
+      obj.frame1.position.set(x + 0.25, y + 45.9, z);
       obj.frame1.visible = false;
       let obj1 = obj.frame1.clone();
       this.TE.Fanblades.push(obj.frame1);
       this.TE.addObject(obj.frame1);
 
-      obj.frame2.position.set(x, y, z);
+      obj.frame2.position.set(x, y, z + 2.5);
       obj.frame2.visible = false;
       let obj2 = obj.frame2.clone();
       this.TE.cylinder.push(obj.frame2);
@@ -281,7 +306,7 @@ export default {
   height: 100%;
   overflow: hidden;
   position: relative;
-  user-select: none!important;
+  user-select: none !important;
 }
 .openObj {
   position: absolute;
@@ -292,7 +317,6 @@ export default {
 }
 .showBox {
   position: absolute;
-  
 }
 .box-card {
   width: 400px;
@@ -300,9 +324,11 @@ export default {
   top: 100px;
   left: 20px;
   /* opacity: 0.8; */
-  background:rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
 }
-::v-deep .el-select,.el-input,.el-input__inner{
+::v-deep .el-select,
+.el-input,
+.el-input__inner {
   opacity: 0.8;
 }
 .schoolLogo {

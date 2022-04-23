@@ -32,12 +32,16 @@ export class TEngine {
 
     // 转动速度
     this.speed = 0.01
+    // 风向
+    this.angle = 0
     // 扇叶
     this.Fanblades = []
     // 扇枉
     this.cylinder = []
     // 扇箱
     this.fanBox = []
+    // 是否改变风机朝向
+    this.changAngle = false
     // 是否启动电机
     this.openElectric = false
     // 是否多风机展示
@@ -64,12 +68,31 @@ export class TEngine {
 
     const renderFun = () => {
       orbitControls.update()
+      // 扇叶转动
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
           item.rotation.z += this.speed
         })
       }
-      
+      // 角度转动
+      if(this.changAngle){
+        if(this.fanBox[0].rotation.y > this.angle ){
+          for(let i=0;i<this.Fanblades.length;i++){
+            this.Fanblades[i].rotation.y += Math.PI / 180 * -0.1
+            this.fanBox[i].rotation.y += Math.PI / 180 * -0.1
+          }
+          if(this.fanBox[0].rotation.y<=this.angle)this.changAngle=false 
+        }else{
+          for(let i=0;i<this.Fanblades.length;i++){
+            this.Fanblades[i].rotation.y += Math.PI / 180 * 0.1
+            this.fanBox[i].rotation.y += Math.PI / 180 * 0.1
+          }
+          if(this.fanBox[0].rotation.y>=this.angle)this.changAngle=false
+        }
+        // 最大只能转动60度
+        if( Math.abs(this.fanBox[0].rotation.y) >= Math.PI / 180 * 60)this.changAngle=false
+      }
+
       renderer.render(scene, this.camera)
       stats.update()
       requestAnimationFrame(renderFun)
