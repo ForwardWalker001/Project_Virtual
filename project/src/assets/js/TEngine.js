@@ -34,6 +34,8 @@ export class TEngine {
     this.speed = 0.01
     // 风向
     this.angle = 0
+    // 转机角度
+    this.angle60 = 0
     // 扇叶
     this.Fanblades = []
     // 扇枉
@@ -71,8 +73,9 @@ export class TEngine {
       // 扇叶转动
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
-          item.rotation.z += this.speed
+          item.rotation.z += this.speed * Math.cos(this.angle-this.angle60)
         })
+        console.log(this.speed * Math.cos(this.angle-this.angle60))
       }
       // 角度转动
       if(this.changAngle){
@@ -81,16 +84,17 @@ export class TEngine {
             this.Fanblades[i].rotation.y += Math.PI / 180 * -0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * -0.1
           }
-          if(this.fanBox[0].rotation.y<=this.angle)this.changAngle=false 
+          if(this.fanBox[0].rotation.y<this.angle)this.changAngle=false 
         }else{
           for(let i=0;i<this.Fanblades.length;i++){
             this.Fanblades[i].rotation.y += Math.PI / 180 * 0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * 0.1
           }
-          if(this.fanBox[0].rotation.y>=this.angle)this.changAngle=false
+          if(this.fanBox[0].rotation.y>this.angle)this.changAngle=false
         }
         // 最大只能转动60度
-        if( Math.abs(this.fanBox[0].rotation.y) >= Math.PI / 180 * 60)this.changAngle=false
+        if( Math.abs(this.fanBox[0].rotation.y) >= Math.PI / 180 * 60)this.changAngle = false
+        this.angle60 = this.fanBox[0].rotation.y
       }
 
       renderer.render(scene, this.camera)
