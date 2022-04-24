@@ -50,6 +50,6 @@ export default {
 <style scoped>
 .scoreStyle {
   width: 80%;
-  margin: 20px auto;
+  margin: 0px auto;
 }
 </style>

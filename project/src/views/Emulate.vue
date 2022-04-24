@@ -18,19 +18,39 @@
           <el-option label="三级" value="0.05"></el-option>
         </el-select>
         <span style="margin: 10px 26px">改变风向：</span>
-        <el-tooltip class="item" effect="dark" content="风机最大可转动正负60度" placement="top">
-        <el-input
-          v-model="changAngle"
-          placeholder="请输入角度"
-          style="width: 222px"
-          @change="changAngleFun"
-        ></el-input></el-tooltip>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="风机最大可转动正负60度"
+          placement="top"
+        >
+          <el-input
+            v-model="changAngle"
+            placeholder="请输入角度"
+            style="width: 222px"
+            @change="changAngleFun"
+          ></el-input
+        ></el-tooltip>
       </el-card>
+      <el-button class="stepStyle" @click="dialogTableVisible = true"
+        >查看得分情况</el-button
+      >
+      <el-dialog title="得分情况" :visible.sync="dialogTableVisible">
+        <score-table style="width:100%!important;"></score-table>
+      </el-dialog>
     </div>
     <div class="showBox2" v-show="!isShow">
       <el-card class="box-card2">
-        <div style="margin: 10px 30px 20px 20px">转机转速：<el-tag style="margin-left:20px;width:80px;">{{fanSpeed}}</el-tag></div>
-        <div style="margin: 10px 30px 10px 20px">转机角度：<el-tag style="margin-left:20px;width:80px;">{{fanAngle}}</el-tag></div>
+        <div style="margin: 10px 30px 20px 20px">
+          转机转速：<el-tag style="margin-left: 20px; width: 80px">{{
+            fanSpeed
+          }}</el-tag>
+        </div>
+        <div style="margin: 10px 30px 10px 20px">
+          转机角度：<el-tag style="margin-left: 20px; width: 80px">{{
+            fanAngle
+          }}</el-tag>
+        </div>
       </el-card>
     </div>
     <div class="openObj">
@@ -67,8 +87,10 @@ import {
 } from "../assets/js/TLoadModel";
 
 import { Object3D } from "three";
+import scoreTable from "../components/scoreTable.vue"
 
 export default {
+  components: { scoreTable },
   data() {
     return {
       title: "多风机展示",
@@ -77,6 +99,7 @@ export default {
       changAngle: 0,
       TE: null,
       TEspeed: "一级",
+      dialogTableVisible:false,
     };
   },
   mounted() {
@@ -91,24 +114,26 @@ export default {
     this.addFrames(0, 0, 0);
   },
   computed: {
-    fanSpeed: function() {
+    fanSpeed: function () {
       try {
-        if(this.TE.openElectric)return (this.TE.speed * Math.cos(this.TE.angle-this.TE.angle60)).toFixed(2)
-        else{
-          return 0
+        if (this.TE.openElectric)
+          return (
+            this.TE.speed * Math.cos(this.TE.angle - this.TE.angle60)
+          ).toFixed(2);
+        else {
+          return 0;
         }
       } catch (error) {
-        return 0
+        return 0;
       }
-      
     },
-    fanAngle: function() {
+    fanAngle: function () {
       try {
-        return (this.TE.angle60 * 180 / Math.PI).toFixed(2)
-      }catch (e){
-        return 0
+        return ((this.TE.angle60 * 180) / Math.PI).toFixed(2);
+      } catch (e) {
+        return 0;
       }
-    }
+    },
   },
   watch: {},
   methods: {
@@ -121,7 +146,7 @@ export default {
       return wrapper;
     },
     changAngleFun() {
-      if (typeof parseFloat(this.changAngle)  === "number") {
+      if (typeof parseFloat(this.changAngle) === "number") {
         this.TE.angle = (Math.PI / 180) * this.changAngle;
         this.TE.changAngle = true;
       }
@@ -344,6 +369,13 @@ export default {
 .showBox {
   position: absolute;
 }
+.stepStyle {
+  background: rgba(255, 255, 255, 0.8);
+  color:#409EFF;
+  position: absolute;
+  top: 8px;
+  left: calc(100vw - 250px);
+}
 .box-card {
   width: 400px;
   position: absolute;
@@ -354,7 +386,6 @@ export default {
 }
 .showBox2 {
   position: absolute;
-  
 }
 .box-card2 {
   width: 300px;
