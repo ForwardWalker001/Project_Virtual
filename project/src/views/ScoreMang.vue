@@ -131,7 +131,6 @@ export default {
       },20)
     },
     scoreSearch() {
-      console.log(111)
       this.$axios
         .get(`/allScore?currentPage=${this.currentPage}`, {
           params: this.serachCondition,

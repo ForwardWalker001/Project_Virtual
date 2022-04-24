@@ -191,7 +191,7 @@
       <div class="line"></div>
       <div class="title">成绩评定与查看</div>
       <div class="content">
-        <div class="main-text">
+        <!-- <div class="main-text">
           <p class="info-title">实验背景</p>
           <div class="info-text">
             <p>
@@ -220,7 +220,8 @@
               需要指出的是智能电网综合自动化虚拟仿真实验系统是不依赖于实验教学案例辅助系统的，是可以独立运行的。
             </p>
           </div>
-        </div>
+        </div> -->
+        <score-table></score-table>
         <!-- 如果登录为学生，弹出成绩表单 -->
         <div v-if="userPower == 2" style="width: 125px; margin: 10px auto 20px">
           <el-button
@@ -271,10 +272,11 @@
 
 <script>
 import LoginForm from "../components/login.vue";
+import scoreTable from "../components/scoreTable.vue"
 import { getStorage, setStorage } from "../util/StorageMan";
 
 export default {
-  components: { LoginForm },
+  components: { LoginForm, scoreTable },
 
   data() {
     return {
