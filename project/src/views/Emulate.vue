@@ -27,6 +27,12 @@
         ></el-input></el-tooltip>
       </el-card>
     </div>
+    <div class="showBox2" v-show="!isShow">
+      <el-card class="box-card2">
+        <div style="margin: 10px 30px 20px 20px">转机转速：<el-tag style="margin-left:20px;width:80px;">{{fanSpeed}}</el-tag></div>
+        <div style="margin: 10px 30px 10px 20px">转机角度：<el-tag style="margin-left:20px;width:80px;">{{fanAngle}}</el-tag></div>
+      </el-card>
+    </div>
     <div class="openObj">
       <el-button
         type="primary"
@@ -83,6 +89,26 @@ export default {
 
     // this.frameArr = [];
     this.addFrames(0, 0, 0);
+  },
+  computed: {
+    fanSpeed: function() {
+      try {
+        if(this.TE.openElectric)return (this.TE.speed * Math.cos(this.TE.angle-this.TE.angle60)).toFixed(2)
+        else{
+          return 0
+        }
+      } catch (error) {
+        return 0
+      }
+      
+    },
+    fanAngle: function() {
+      try {
+        return (this.TE.angle60 * 180 / Math.PI).toFixed(2)
+      }catch (e){
+        return 0
+      }
+    }
   },
   watch: {},
   methods: {
@@ -321,8 +347,21 @@ export default {
 .box-card {
   width: 400px;
   position: absolute;
-  top: 100px;
+  top: 150px;
   left: 20px;
+  /* opacity: 0.8; */
+  background: rgba(255, 255, 255, 0.8);
+}
+.showBox2 {
+  position: absolute;
+  
+}
+.box-card2 {
+  width: 300px;
+  position: absolute;
+  top: 400px;
+  left: 80px;
+  text-align: center;
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);
 }

@@ -75,7 +75,6 @@ export class TEngine {
         this.Fanblades.forEach((item) => {
           item.rotation.z += this.speed * Math.cos(this.angle-this.angle60)
         })
-        console.log(this.speed * Math.cos(this.angle-this.angle60))
       }
       // 角度转动
       if(this.changAngle){
