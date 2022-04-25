@@ -7,11 +7,7 @@
         <el-select
           v-model="TEspeed"
           style="margin-bottom: 15px"
-          @change="
-            (val) => {
-              TE.speed = parseFloat(val);
-            }
-          "
+          @change="changSpeed"
         >
           <el-option label="一级" value="0.01"></el-option>
           <el-option label="二级" value="0.03"></el-option>
@@ -35,9 +31,11 @@
       <el-button class="stepStyle" @click="dialogTableVisible = true"
         >查看得分情况</el-button
       >
-      <el-dialog title="得分情况" :visible.sync="dialogTableVisible">
+      <el-dialog title="得分情况" :visible.sync="dialogTableVisible"
+      >
         <score-table style="width: 100% !important"></score-table>
       </el-dialog>
+      
     </div>
     <div class="showBox2" v-show="!isShow">
       <el-card class="box-card2">
@@ -79,7 +77,7 @@ import { TEngine } from "../assets/js/TEngine.js";
 import { basicObjectList } from "../assets/js/TBasicObject";
 import { LightsList } from "../assets/js/Tlights";
 import { helperList } from "../assets/js/THelper";
-import { setInterCamera } from "../assets/js/utils";
+import { setInterCamera, setStorage, getStorage, putScore} from "../assets/js/utils";
 import {
   framePromise,
   framePromise2,
@@ -94,16 +92,21 @@ export default {
   components: { scoreTable },
   data() {
     return {
-      title: "多风机展示",
+      title: "多风机运行",
       isShow: false,
       electricTitle: "启动电机",
       changAngle: 0,
       TE: null,
       TEspeed: "一级",
       dialogTableVisible: false,
+      // isShow1:true
     };
   },
   mounted() {
+    this.dialogTableVisible = true
+    this.dialogTableVisible = false
+
+    
     const threeTarget = this.$refs.threeTarget;
     const TE = new TEngine(threeTarget);
     this.TE = TE;
@@ -147,26 +150,50 @@ export default {
       obj.position.set(-x, -y, -z);
       return wrapper;
     },
+    // 改变风速
+    changSpeed(val) {
+      this.TE.speed = parseFloat(val)
+      if(!this.$EventBus.tableData[2].isComplete){
+          setStorage('score',getStorage('score')+10,0.5)
+          putScore(this.$axios,()=>{
+            this.$EventBus.tableData[2].isComplete = true
+          })
+        }
+    },
+    // 改变风向
     changAngleFun() {
       if (typeof parseFloat(this.changAngle) === "number") {
         this.TE.angle = (Math.PI / 180) * this.changAngle;
         this.TE.changAngle = true;
+        if(!this.$EventBus.tableData[3].isComplete){
+          setStorage('score',getStorage('score')+20,0.5)
+          putScore(this.$axios,()=>{
+            this.$EventBus.tableData[3].isComplete = true
+          })
+        }
       }
     },
+    // 启动电机
     openElectric() {
       if (!this.TE.openElectric) {
         this.electricTitle = "关闭电机";
         this.TE.openElectric = true;
+        if(!this.$EventBus.tableData[1].isComplete){
+          setStorage('score',getStorage('score')+10,0.5)
+          putScore(this.$axios,()=>{
+            this.$EventBus.tableData[1].isComplete = true
+          })
+        }
       } else {
         this.electricTitle = "启动电机";
         this.TE.openElectric = false;
       }
     },
+    // 多风机运行
     openShow() {
       if (!this.isShow) {
-        this.title = "单风机展示";
+        this.title = "单风机运行";
         this.isShow = true;
-
         // this.TE.camera.position.set(190, 130, -190)
         setInterCamera(190, 150, -200, this.TE.camera);
         this.TE.Fanblades.forEach((item) => {
@@ -178,8 +205,14 @@ export default {
         this.TE.fanBox.forEach((item) => {
           item.visible = true;
         });
+        if(!this.$EventBus.tableData[4].isComplete){
+          setStorage('score',getStorage('score')+10,0.5)
+          putScore(this.$axios,()=>{
+            this.$EventBus.tableData[4].isComplete = true
+          })
+        }
       } else {
-        this.title = "多风机展示";
+        this.title = "多风机运行";
         this.isShow = false;
         this.TE.camera.position.set(15, 91, -100);
         // setInterCamera(20, 90, -100, this.TE.camera)
@@ -368,6 +401,7 @@ export default {
       this.line3--;
       this.createFramesLine3(x - 80, y, z, frame);
     },
+
   },
 };
 </script>

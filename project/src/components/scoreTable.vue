@@ -5,6 +5,7 @@
     stripe
     border
     style="width: 80%"
+    v-if="isShow"
   >
     <el-table-column align="center" prop="content" label="实验内容"> </el-table-column>
     <el-table-column align="center" prop="score" label="分值" width="180"> </el-table-column>
@@ -20,34 +21,16 @@
 export default {
   data() {
     return {
-      tableData: [
-        {
-          content: "查看实验相关介绍",
-          score: 10,
-          isComplete: false,
-        },
-        {
-          content: "实验内容-2",
-          score: 10,
-          isComplete: false,
-        },
-        {
-          content: "实验内容-3",
-          score: 10,
-          isComplete: false,
-        },
-        {
-          content: "实验内容-4",
-          score: 10,
-          isComplete: false,
-        },
-      ],
+      isShow:true,
+      tableData: this.$EventBus.tableData,
     };
   },
   mounted() {
-    this.$EventBus.$on('changType',(val)=>{
-      this.tableData[val].isComplete = true
-    })
+    
+    // this.$EventBus.$on('changType',(val)=>{
+    //   this.tableData[val].isComplete = true1
+    //   console.log(val)
+    // })
   }
 };
 </script>

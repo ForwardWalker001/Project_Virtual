@@ -270,6 +270,7 @@ export default {
     };
   },
   mounted() {
+    
     this.changNavColor(this.currtNav);
     window.addEventListener("scroll", this.debounce(this.changMenu, 100));
 
@@ -390,7 +391,7 @@ export default {
             let { code } = res.data;
             if (code == 200) {
               // console.log(code)
-              this.$EventBus.$emit('changType',0)
+              this.$EventBus.tableData[0].isComplete = true
             }
           })
     },

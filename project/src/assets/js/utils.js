@@ -35,13 +35,13 @@ export const debounce = (fn, delay) => {
   };
 }
 // 修改成绩
-export const putScore =()=>{
-  this.$axios
+export const putScore = (obj,Callback)=>{
+  obj
   .get(`/changScore?user_id=${getStorage("userInfo").id}&score=${getStorage("score")}`)
   .then((res) => {
     let { code } = res.data;
     if (code == 200) {
-      console.log(code)
+      Callback()
     }
   })
 }
