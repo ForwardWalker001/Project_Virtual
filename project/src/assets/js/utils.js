@@ -11,7 +11,7 @@ export const deep = (obj) => {
   return newObj;
 }
 
-// 移动摄像头
+// 位置移动
 export const setInterCamera = (x, y, z, obj) => {
   // obj.position.set(20, 50, -50)
   let timer = setInterval(() => {
@@ -33,4 +33,35 @@ export const debounce = (fn, delay) => {
     }
     timer = setTimeout(fn, delay); // 重新开始计时
   };
+}
+// 修改成绩
+export const putScore =()=>{
+  this.$axios
+  .get(`/changScore?user_id=${getStorage("userInfo").id}&score=${getStorage("score")}`)
+  .then((res) => {
+    let { code } = res.data;
+    if (code == 200) {
+      console.log(code)
+    }
+  })
+}
+// storage
+export let setStorage = (key, value, expire) => {
+  let obj = {
+      data: value,
+      time: Date.now(),
+      // 输入天数，保存为秒数
+      expire: expire * 60 * 60 * 24 * 1000
+  }
+  localStorage.setItem(key, JSON.stringify(obj))
+}
+export let getStorage = (key) => {
+  let obj = localStorage.getItem(key)
+  if(!obj)return false
+  obj = JSON.parse(obj)
+  if (Date.now() - obj.time > obj.expire) {
+      localStorage.removeItem(key);
+      return null;
+  }
+  return obj.data;
 }

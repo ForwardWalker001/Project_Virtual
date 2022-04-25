@@ -2,7 +2,6 @@ import {
   Mesh,
   BoxBufferGeometry,
   MeshStandardMaterial,
-
   
 
 } from 'three'
@@ -16,7 +15,8 @@ export const stage = new Mesh(
   new BoxBufferGeometry(800, 10, 800),
   new MeshStandardMaterial({
     color: 'rgb(0, 75, 75)',
-    roughness: 0
+    roughness: 0,
+    // map: pictureTexture
   })
 )
 stage.raycast = () => {}

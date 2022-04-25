@@ -7,7 +7,7 @@ import { stage } from './TBasicObject'
 
 export const LightsList = []
 
-const ambientLight = new AmbientLight('rgb(255, 255, 255)', 0.3)
+const ambientLight = new AmbientLight('rgb(255, 255, 255)',0.4)
 
 export const pointLight = new PointLight(
   'rgb(255, 0, 0)',

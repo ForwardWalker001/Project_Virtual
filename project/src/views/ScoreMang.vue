@@ -128,7 +128,7 @@ export default {
         this.chartData = this.tableData
         this.showChart = true
         // console.log(this.tableData.length)
-      },20)
+      },50)
     },
     scoreSearch() {
       this.$axios

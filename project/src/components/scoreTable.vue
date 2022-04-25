@@ -22,14 +22,14 @@ export default {
     return {
       tableData: [
         {
-          content: "实验内容-1",
+          content: "查看实验相关介绍",
           score: 10,
           isComplete: true,
         },
         {
           content: "实验内容-2",
           score: 10,
-          isComplete: true,
+          isComplete: false,
         },
         {
           content: "实验内容-3",

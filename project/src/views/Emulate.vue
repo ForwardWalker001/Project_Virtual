@@ -36,7 +36,7 @@
         >查看得分情况</el-button
       >
       <el-dialog title="得分情况" :visible.sync="dialogTableVisible">
-        <score-table style="width:100%!important;"></score-table>
+        <score-table style="width: 100% !important"></score-table>
       </el-dialog>
     </div>
     <div class="showBox2" v-show="!isShow">
@@ -84,10 +84,11 @@ import {
   framePromise,
   framePromise2,
   framePromise3,
+  grassPromise,
 } from "../assets/js/TLoadModel";
 
 import { Object3D } from "three";
-import scoreTable from "../components/scoreTable.vue"
+import scoreTable from "../components/scoreTable.vue";
 
 export default {
   components: { scoreTable },
@@ -99,7 +100,7 @@ export default {
       changAngle: 0,
       TE: null,
       TEspeed: "一级",
-      dialogTableVisible:false,
+      dialogTableVisible: false,
     };
   },
   mounted() {
@@ -112,6 +113,7 @@ export default {
 
     // this.frameArr = [];
     this.addFrames(0, 0, 0);
+    // this.addGrass(250, 250,{})
   },
   computed: {
     fanSpeed: function () {
@@ -201,6 +203,17 @@ export default {
         });
       }
     },
+    // 草地
+    addGrass(x , z, obj) {
+      obj.position.set(x,0,z)
+      this.TE.addObject(obj);
+      if(x-10<-250){
+        x = 260
+        z = z-10
+        if(z<-250)return
+      }
+      this.addGrass(x-10,z,obj.clone())
+    },
     // 加载风电模型
     addFrames(x, y, z) {
       let line1Obj = {
@@ -218,6 +231,7 @@ export default {
         frame2: null,
         frame3: null,
       };
+
       framePromise.then((frame) => {
         // 改变转机旋转中心
         let obj1 = this.changePoint(0.3, 45.9, 0, frame);
@@ -260,6 +274,13 @@ export default {
         this.createFramesLine2(160, 0, 0, line2Obj);
         this.line3 = 5;
         this.createFramesLine3(160, 0, -100, line3Obj);
+      });
+      // 加载草地
+      grassPromise.then((frame) => {
+        frame.position.set(250,0,250)
+        let obj = frame.clone()
+        this.TE.addObject(frame);
+        this.addGrass(250-10,250,obj)
       });
     },
 
@@ -371,7 +392,7 @@ export default {
 }
 .stepStyle {
   background: rgba(255, 255, 255, 0.8);
-  color:#409EFF;
+  color: #409eff;
   position: absolute;
   top: 8px;
   left: calc(100vw - 250px);

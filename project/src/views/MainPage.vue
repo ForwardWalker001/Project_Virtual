@@ -1,5 +1,9 @@
 <template>
-  <div class="member-service-protocol">
+  <div class="member-service-protocol"
+    v-loading="loading"
+    element-loading-text="拼命加载场景中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
     <div class="menu">
       <div class="navMenu">
         <div @click="goToAnchor('Alisa')" ref="Alisa">首页</div>
@@ -261,6 +265,8 @@ export default {
       userPower: getStorage("userInfo")
         ? getStorage("userInfo").userPower
         : null,
+      loading: false,
+      isgetScore: false
     };
   },
   mounted() {
@@ -269,6 +275,7 @@ export default {
 
     if (this.username != "") this.isLogin = true;
   },
+  watch: {},
   methods: {
     gowebGl() {
       if (!this.isLogin) {
@@ -279,7 +286,12 @@ export default {
           duration: 2000,
         });
       } else {
-        this.$router.push("/webGlpage");
+        this.loading = true
+        setTimeout(()=>{
+          this.$router.push("/webGlpage");
+          this.loading = false
+        },2000)
+        
       }
     },
     goToAnchor(selector) {
@@ -290,6 +302,11 @@ export default {
       });
     },
     changNavColor(refDom) {
+      if(refDom != 'Alisa' && !this.isgetScore && this.isLogin){
+        this.isgetScore = true
+        setStorage('score',10,0.5)
+        this.putScore()
+      }
       setStorage("nowNav", refDom, 0.0006);
       this.currtNav = refDom;
       this.$refs[refDom].style.background = "#fff";
@@ -300,7 +317,7 @@ export default {
     changMenu() {
       var windowHeight = document.documentElement.clientHeight;
       var threshold = 300;
-      (this.navList = ["Alisa", "Cynthia", "Marco", "William", "Jorge"]),
+      this.navList = ["Alisa", "Cynthia", "Marco", "William", "Jorge"],
         this.navList.forEach((domId) => {
           let target = document.getElementById(domId).getBoundingClientRect();
           let targetTop = target.top;
@@ -364,7 +381,17 @@ export default {
               type: "warning",
             });
           });
-      }
+        }
+    },
+    putScore(){
+        this.$axios
+          .get(`/changScore?user_id=${getStorage("userInfo").id}&score=${getStorage("score")}`)
+          .then((res) => {
+            let { code } = res.data;
+            if (code == 200) {
+              console.log(code)
+            }
+          })
     },
     toScoreMang() {
       if (!this.isLogin) {

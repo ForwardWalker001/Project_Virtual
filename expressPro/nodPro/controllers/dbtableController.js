@@ -145,6 +145,7 @@ const changScore = (req, res) => {
     var sql = "UPDATE userscore SET score = ?, scoredate=? WHERE user_id = ? and score<?";
     var sqlArr = [score, changDate.changDate(), user_id,score ]
     console.log(sqlArr)
+    
     var callBack = (err, data) => {
         if (err) {
             console.log('连接出错了', err)
@@ -161,7 +162,12 @@ const changScore = (req, res) => {
 
         }
     }
-    dbConfig.sqlConnect(sql, sqlArr, callBack)
+    if(user_id == 'undefined'){
+        return
+    }
+    else{
+        dbConfig.sqlConnect(sql, sqlArr, callBack)
+    }
 }
 module.exports = {
     login,

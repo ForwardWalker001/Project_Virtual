@@ -5,11 +5,14 @@
 </template>
 
 <script>
-
+import { setStorage } from "./util/StorageMan";
 export default {
   name: 'App',
   components: {
     
+  },
+  created() {
+    setStorage('score',0,0.5)
   }
 }
 </script>
