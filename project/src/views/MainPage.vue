@@ -389,7 +389,8 @@ export default {
           .then((res) => {
             let { code } = res.data;
             if (code == 200) {
-              console.log(code)
+              // console.log(code)
+              this.$EventBus.$emit('changType',0)
             }
           })
     },

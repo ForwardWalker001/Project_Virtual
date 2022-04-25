@@ -24,7 +24,7 @@ export default {
         {
           content: "查看实验相关介绍",
           score: 10,
-          isComplete: true,
+          isComplete: false,
         },
         {
           content: "实验内容-2",
@@ -44,6 +44,11 @@ export default {
       ],
     };
   },
+  mounted() {
+    this.$EventBus.$on('changType',(val)=>{
+      this.tableData[val].isComplete = true
+    })
+  }
 };
 </script>
 
