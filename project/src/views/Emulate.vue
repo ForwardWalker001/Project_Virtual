@@ -9,9 +9,9 @@
           style="margin-bottom: 15px"
           @change="changSpeed"
         >
-          <el-option label="一级" value="0.01"></el-option>
-          <el-option label="二级" value="0.03"></el-option>
-          <el-option label="三级" value="0.05"></el-option>
+          <el-option label="4 m/s" value="0.02"></el-option>
+          <el-option label="8 m/s" value="0.04"></el-option>
+          <el-option label="12 m/s" value="0.06"></el-option>
         </el-select>
         <span style="margin: 10px 26px">改变风向：</span>
         <el-tooltip
@@ -31,13 +31,11 @@
       <el-button class="stepStyle" @click="dialogTableVisible = true"
         >查看得分情况</el-button
       >
-      <el-dialog title="得分情况" :visible.sync="dialogTableVisible"
-      >
+      <el-dialog title="得分情况" :visible.sync="dialogTableVisible">
         <score-table style="width: 100% !important"></score-table>
       </el-dialog>
-      
     </div>
-    <div class="showBox2" v-show="!isShow">
+    <div class="showBox" v-show="!isShow">
       <el-card class="box-card2">
         <div style="margin: 10px 30px 20px 20px">
           转机转速：<el-tag style="margin-left: 20px; width: 80px">{{
@@ -51,6 +49,12 @@
         </div>
       </el-card>
     </div>
+    <div class="showBox" v-show="!isShow">
+      <el-card class="box-card3">
+        <line-chart :chartData="chartDataArr"></line-chart>
+      </el-card>
+    </div>
+
     <div class="openObj">
       <el-button
         type="primary"
@@ -77,7 +81,13 @@ import { TEngine } from "../assets/js/TEngine.js";
 import { basicObjectList } from "../assets/js/TBasicObject";
 import { LightsList } from "../assets/js/Tlights";
 import { helperList } from "../assets/js/THelper";
-import { setInterCamera, setStorage, getStorage, putScore} from "../assets/js/utils";
+import {
+  setInterCamera,
+  setStorage,
+  getStorage,
+  putScore,
+  changSpeed
+} from "../assets/js/utils";
 import {
   framePromise,
   framePromise2,
@@ -87,9 +97,10 @@ import {
 
 import { Object3D } from "three";
 import scoreTable from "../components/scoreTable.vue";
+import LineChart from "../components/LineChart.vue";
 
 export default {
-  components: { scoreTable },
+  components: { scoreTable, LineChart },
   data() {
     return {
       title: "多风机运行",
@@ -97,16 +108,14 @@ export default {
       electricTitle: "启动电机",
       changAngle: 0,
       TE: null,
-      TEspeed: "一级",
+      TEspeed: "4 m/s",
       dialogTableVisible: false,
-      // isShow1:true
     };
   },
   mounted() {
-    this.dialogTableVisible = true
-    this.dialogTableVisible = false
+    this.dialogTableVisible = true;
+    this.dialogTableVisible = false;
 
-    
     const threeTarget = this.$refs.threeTarget;
     const TE = new TEngine(threeTarget);
     this.TE = TE;
@@ -117,13 +126,17 @@ export default {
     // this.frameArr = [];
     this.addFrames(0, 0, 0);
     // this.addGrass(250, 250,{})
+    
+    setTimeout(()=>{
+      this.$EventBus.$emit('changLoad',false)
+    },2000)
   },
   computed: {
     fanSpeed: function () {
       try {
         if (this.TE.openElectric)
           return (
-            this.TE.speed * Math.cos(this.TE.angle - this.TE.angle60)
+            this.TE.speed * Math.cos(this.TE.angle - this.TE.angle60) * 200
           ).toFixed(2);
         else {
           return 0;
@@ -135,6 +148,13 @@ export default {
     fanAngle: function () {
       try {
         return ((this.TE.angle60 * 180) / Math.PI).toFixed(2);
+      } catch (e) {
+        return 0;
+      }
+    },
+    chartDataArr: function () {
+      try {
+        return this.TE.speedArr
       } catch (e) {
         return 0;
       }
@@ -152,24 +172,26 @@ export default {
     },
     // 改变风速
     changSpeed(val) {
-      this.TE.speed = parseFloat(val)
-      if(!this.$EventBus.tableData[2].isComplete){
-          setStorage('score',getStorage('score')+10,0.5)
-          putScore(this.$axios,()=>{
-            this.$EventBus.tableData[2].isComplete = true
-          })
-        }
+      this.TE.speed = parseFloat(val);
+      if(this.TE.openElectric)changSpeed(this.TE)
+      if (!this.$EventBus.tableData[2].isComplete) {
+        setStorage("score", getStorage("score") + 10, 0.5);
+        putScore(this.$axios, () => {
+          this.$EventBus.tableData[2].isComplete = true;
+        });
+      }
     },
     // 改变风向
     changAngleFun() {
       if (typeof parseFloat(this.changAngle) === "number") {
         this.TE.angle = (Math.PI / 180) * this.changAngle;
         this.TE.changAngle = true;
-        if(!this.$EventBus.tableData[3].isComplete){
-          setStorage('score',getStorage('score')+20,0.5)
-          putScore(this.$axios,()=>{
-            this.$EventBus.tableData[3].isComplete = true
-          })
+        if(this.TE.openElectric)changSpeed(this.TE)
+        if (!this.$EventBus.tableData[3].isComplete) {
+          setStorage("score", getStorage("score") + 20, 0.5);
+          putScore(this.$axios, () => {
+            this.$EventBus.tableData[3].isComplete = true;
+          });
         }
       }
     },
@@ -178,15 +200,17 @@ export default {
       if (!this.TE.openElectric) {
         this.electricTitle = "关闭电机";
         this.TE.openElectric = true;
-        if(!this.$EventBus.tableData[1].isComplete){
-          setStorage('score',getStorage('score')+10,0.5)
-          putScore(this.$axios,()=>{
-            this.$EventBus.tableData[1].isComplete = true
-          })
+        changSpeed(this.TE)
+        if (!this.$EventBus.tableData[1].isComplete) {
+          setStorage("score", getStorage("score") + 10, 0.5);
+          putScore(this.$axios, () => {
+            this.$EventBus.tableData[1].isComplete = true;
+          });
         }
       } else {
         this.electricTitle = "启动电机";
         this.TE.openElectric = false;
+        this.TE.speedArr.push(...(new Array(5).fill(0)))
       }
     },
     // 多风机运行
@@ -205,11 +229,11 @@ export default {
         this.TE.fanBox.forEach((item) => {
           item.visible = true;
         });
-        if(!this.$EventBus.tableData[4].isComplete){
-          setStorage('score',getStorage('score')+10,0.5)
-          putScore(this.$axios,()=>{
-            this.$EventBus.tableData[4].isComplete = true
-          })
+        if (!this.$EventBus.tableData[4].isComplete) {
+          setStorage("score", getStorage("score") + 10, 0.5);
+          putScore(this.$axios, () => {
+            this.$EventBus.tableData[4].isComplete = true;
+          });
         }
       } else {
         this.title = "多风机运行";
@@ -237,15 +261,15 @@ export default {
       }
     },
     // 草地
-    addGrass(x , z, obj) {
-      obj.position.set(x,0,z)
+    addGrass(x, z, obj) {
+      obj.position.set(x, 0, z);
       this.TE.addObject(obj);
-      if(x-10<-250){
-        x = 260
-        z = z-10
-        if(z<-250)return
+      if (x - 10 < -250) {
+        x = 260;
+        z = z - 10;
+        if (z < -250) return;
       }
-      this.addGrass(x-10,z,obj.clone())
+      this.addGrass(x - 10, z, obj.clone());
     },
     // 加载风电模型
     addFrames(x, y, z) {
@@ -310,10 +334,10 @@ export default {
       });
       // 加载草地
       grassPromise.then((frame) => {
-        frame.position.set(250,0,250)
-        let obj = frame.clone()
+        frame.position.set(250, 0, 250);
+        let obj = frame.clone();
         this.TE.addObject(frame);
-        this.addGrass(250-10,250,obj)
+        this.addGrass(250 - 10, 250, obj);
       });
     },
 
@@ -401,7 +425,6 @@ export default {
       this.line3--;
       this.createFramesLine3(x - 80, y, z, frame);
     },
-
   },
 };
 </script>
@@ -439,15 +462,20 @@ export default {
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);
 }
-.showBox2 {
-  position: absolute;
-}
 .box-card2 {
   width: 300px;
   position: absolute;
   top: 400px;
   left: 80px;
   text-align: center;
+  /* opacity: 0.8; */
+  background: rgba(255, 255, 255, 0.8);
+}
+.box-card3 {
+  width: 400px;
+  position: absolute;
+  top: 150px;
+  left: calc(100vw - 440px);
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);
 }

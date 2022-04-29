@@ -23,7 +23,30 @@ export const setInterCamera = (x, y, z, obj) => {
     }
   }, 60)
 }
-
+// 更新转机速度
+export const changSpeed = (TE) =>{
+  let num2 = 0,num1 = 0
+  let temp
+  let timer = setInterval(() => {
+    temp = TE.speed * Math.cos(TE.angle - TE.angle60)
+    num2 ++
+    if (num2>=10) {
+      num2 = 0
+      if (temp.toFixed(4) * 200 == (TE.speedArr[TE.speedArr.length - 1])) num1++
+      else {
+        num1 = 0
+      }
+      if (num1 <= 5) {
+        TE.speedArr.push(temp.toFixed(4) * 200)
+      }else{
+        clearInterval(timer)
+      }
+      if (TE.speedArr.length >= 30) {
+        TE.speedArr.shift()
+      }
+    }
+  }, 100);
+}
 // 防抖
 export const debounce = (fn, delay) => {
   let timer = null;

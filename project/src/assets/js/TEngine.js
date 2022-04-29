@@ -30,8 +30,10 @@ export class TEngine {
     this.camera.lookAt(new Vector3(0, 50, 0))
     this.camera.up = new Vector3(0, 1, 0)
 
-    // 转动速度
-    this.speed = 0.01
+    // 风速
+    this.speed = 0.02
+    // 历史转机速度
+    this.speedArr = new Array(5).fill(0)
     // 风向
     this.angle = 0
     // 转机角度
@@ -66,35 +68,52 @@ export class TEngine {
     //   MIDDLE: MOUSE.DOLLY,
     //   RIGHT: MOUSE.ROTATE
     // }
-
-
+    // this.num1 = 0
+    // this.num2 = 0
     const renderFun = () => {
       orbitControls.update()
+      let temp = this.speed * Math.cos(this.angle - this.angle60)
+      // this.num2++
       // 扇叶转动
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
-          item.rotation.z += this.speed * Math.cos(this.angle-this.angle60)
+          item.rotation.z += temp
         })
+        // if (this.num2>=20) {
+        //   this.num2 = 0
+        //   if (temp.toFixed(4) * 200 == (this.speedArr[this.speedArr.length - 1])) this.num1++
+        //   else {
+        //     this.num1 = 0
+        //   }
+        //   if (this.num1 <= 5) {
+        //     this.speedArr.push(temp.toFixed(4) * 200)
+        //   }
+        //   if (this.speedArr.length >= 30) {
+        //     this.speedArr.shift()
+        //   }
+        // }
       }
+
       // 角度转动
-      if(this.changAngle){
-        if(this.fanBox[0].rotation.y > this.angle ){
-          for(let i=0;i<this.Fanblades.length;i++){
+      if (this.changAngle) {
+        if (this.fanBox[0].rotation.y > this.angle) {
+          for (let i = 0; i < this.Fanblades.length; i++) {
             this.Fanblades[i].rotation.y += Math.PI / 180 * -0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * -0.1
           }
-          if(this.fanBox[0].rotation.y<this.angle)this.changAngle=false 
-        }else{
-          for(let i=0;i<this.Fanblades.length;i++){
+          if (this.fanBox[0].rotation.y < this.angle) this.changAngle = false
+        } else {
+          for (let i = 0; i < this.Fanblades.length; i++) {
             this.Fanblades[i].rotation.y += Math.PI / 180 * 0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * 0.1
           }
-          if(this.fanBox[0].rotation.y>this.angle)this.changAngle=false
+          if (this.fanBox[0].rotation.y > this.angle) this.changAngle = false
         }
         // 最大只能转动60度
-        if( Math.abs(this.fanBox[0].rotation.y) >= Math.PI / 180 * 60)this.changAngle = false
+        if (Math.abs(this.fanBox[0].rotation.y) >= Math.PI / 180 * 60) this.changAngle = false
         this.angle60 = this.fanBox[0].rotation.y
       }
+
 
       renderer.render(scene, this.camera)
       stats.update()

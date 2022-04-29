@@ -1,5 +1,8 @@
 <template>
-  <div id="app">
+  <div id="app" v-loading="loading"
+    element-loading-text="拼命加载场景中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
     <router-view></router-view>
   </div>
 </template>
@@ -8,11 +11,23 @@
 import { setStorage } from "./util/StorageMan";
 export default {
   name: 'App',
+  data () {
+    return {
+      loading: false
+    }
+  },
+  computed: {
+  },
   components: {
     
   },
   created() {
     setStorage('score',0,0.5)
+  },
+  mounted() {
+    this.$EventBus.$on('changLoad',(val)=>{
+      this.loading = val
+    })
   }
 }
 </script>

@@ -37,7 +37,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.path === '/index') return next()
-    // 获取token ，查看是否登录
+    // 查看是否登录
     const loginUser = getStorage('userInfo')
     if ( !loginUser ) return next('/index')
     next()

@@ -91,7 +91,7 @@
 
 <script>
 import { getStorage } from "../util/StorageMan";
-import Charts from "../components/charts.vue";
+import Charts from "../components/Scorecharts.vue";
 
 export default {
   components: { Charts },

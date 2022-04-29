@@ -7,7 +7,6 @@ export let setStorage = (key, value, expire) => {
     }
     localStorage.setItem(key, JSON.stringify(obj))
 }
-
 export let getStorage = (key) => {
     let obj = localStorage.getItem(key)
     if(!obj)return false

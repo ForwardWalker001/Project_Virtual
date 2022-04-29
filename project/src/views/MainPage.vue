@@ -1,16 +1,13 @@
 <template>
   <div class="member-service-protocol"
-    v-loading="loading"
-    element-loading-text="拼命加载场景中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)">
+    >
     <div class="menu">
       <div class="navMenu">
-        <div @click="goToAnchor('Alisa')" ref="Alisa">首页</div>
-        <div @click="goToAnchor('Cynthia')" ref="Cynthia">实验背景</div>
-        <div @click="goToAnchor('Marco')" ref="Marco">实验指南</div>
-        <div @click="goToAnchor('William')" ref="William">实验步骤</div>
-        <div @click="goToAnchor('Jorge')" ref="Jorge">成绩评定与查看</div>
+        <div @click="goToAnchor('index')" ref="index">首页</div>
+        <div @click="goToAnchor('backdrop')" ref="backdrop">实验背景</div>
+        <div @click="goToAnchor('guide')" ref="guide">实验指南</div>
+        <div @click="goToAnchor('step')" ref="step">实验步骤</div>
+        <div @click="goToAnchor('showScore')" ref="showScore">成绩评定与查看</div>
       </div>
       <el-tooltip :disabled="username == ''" placement="bottom">
         <span slot="content" style="cursor: pointer" @click="exitLogin"
@@ -40,24 +37,24 @@
       </el-tooltip>
     </div>
 
-    <div class="item" id="Alisa">
+    <div class="item" id="index">
       <div class="title"></div>
       <div class="content index">
         <h1>风力发电虚拟仿真实验</h1>
         <div class="detail">
           <span>学校： 湖南科技大学</span>
-          <span style="margin-left: 50px">负责人： 彭宇祥</span>
+          <span style="margin-left: 50px">负责人： XXX</span>
           <div style="margin-top: 40px">
             <span class="but" style="margin-right: 25px" @click="gowebGl"
               >进入实验</span
             >
-            <span class="but" @click="goToAnchor('Marco')">查看实验指南</span>
+            <span class="but" @click="goToAnchor('guide')">查看实验指南</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="item" id="Cynthia">
+    <div class="item" id="backdrop">
       <div class="line"></div>
       <div class="title">实验背景</div>
       <div class="content">
@@ -95,7 +92,7 @@
       </div>
     </div>
 
-    <div class="item" id="Marco">
+    <div class="item" id="guide">
       <div class="line"></div>
       <div class="title">实验指南</div>
       <div class="content">
@@ -154,7 +151,7 @@
       </div>
     </div>
 
-    <div class="item" id="William">
+    <div class="item" id="step">
       <div class="line"></div>
       <div class="title">实验步骤</div>
       <div class="content">
@@ -191,7 +188,7 @@
       </div>
     </div>
     <!-- 成绩查看 -->
-    <div class="item" id="Jorge">
+    <div class="item" id="showScore">
       <div class="line"></div>
       <div class="title" style="margin-bottom:20px">成绩评定与查看</div>
       <div class="content">
@@ -255,7 +252,7 @@ export default {
   data() {
     return {
       preNav: null,
-      currtNav: getStorage("nowNav") || "Alisa",
+      currtNav: getStorage("nowNav") || "index",
       gridData: [],
       dialogTableVisible: false,
       LoginTableVisible: false,
@@ -265,7 +262,6 @@ export default {
       userPower: getStorage("userInfo")
         ? getStorage("userInfo").userPower
         : null,
-      loading: false,
       isgetScore: false
     };
   },
@@ -287,14 +283,11 @@ export default {
           duration: 2000,
         });
       } else {
-        this.loading = true
-        setTimeout(()=>{
-          this.$router.push("/webGlpage");
-          this.loading = false
-        },2000)
-        
+        this.$EventBus.$emit('changLoad',true)
+        this.$router.push("/webGlpage");
       }
     },
+    // 平滑跳转至指定dom
     goToAnchor(selector) {
       this.changNavColor(selector);
       this.$el.querySelector("#" + selector).scrollIntoView({
@@ -303,7 +296,7 @@ export default {
       });
     },
     changNavColor(refDom) {
-      if(refDom != 'Alisa' && !this.isgetScore && this.isLogin){
+      if(refDom != 'index' && !this.isgetScore && this.isLogin){
         this.isgetScore = true
         setStorage('score',10,0.5)
         this.putScore()
@@ -318,12 +311,12 @@ export default {
     changMenu() {
       var windowHeight = document.documentElement.clientHeight;
       var threshold = 300;
-      this.navList = ["Alisa", "Cynthia", "Marco", "William", "Jorge"],
+      this.navList = ["index", "backdrop", "guide", "step", "showScore"],
         this.navList.forEach((domId) => {
           let target = document.getElementById(domId).getBoundingClientRect();
           let targetTop = target.top;
-
           if (targetTop < windowHeight - threshold) {
+            // 改变导航栏样式
             this.changNavColor(domId);
           }
         });
