@@ -45,7 +45,7 @@ export const changSpeed = (TE) =>{
         TE.speedArr.shift()
       }
     }
-  }, 100);
+  }, 50);
 }
 // 防抖
 export const debounce = (fn, delay) => {

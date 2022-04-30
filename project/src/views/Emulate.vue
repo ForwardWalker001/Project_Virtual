@@ -183,7 +183,8 @@ export default {
     },
     // 改变风向
     changAngleFun() {
-      if (typeof parseFloat(this.changAngle) === "number") {
+      let a = parseFloat(this.changAngle)
+      if (typeof a === "number" && !isNaN(a)) {
         this.TE.angle = (Math.PI / 180) * this.changAngle;
         this.TE.changAngle = true;
         if(this.TE.openElectric)changSpeed(this.TE)
@@ -474,7 +475,7 @@ export default {
 .box-card3 {
   width: 400px;
   position: absolute;
-  top: 150px;
+  top: 110px;
   left: calc(100vw - 440px);
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);

@@ -57,6 +57,7 @@ export default {
             data: this.chartData,
             type: "line",
             smooth: true,
+            symbol: 'circle',
           },
         ],
       };
