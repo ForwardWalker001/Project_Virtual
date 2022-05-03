@@ -42,15 +42,21 @@
             fanSpeed
           }}</el-tag>
         </div>
-        <div style="margin: 10px 30px 10px 20px">
+        <div style="margin: 10px 30px 20px 20px">
           转机角度：<el-tag style="margin-left: 20px; width: 80px">{{
             fanAngle
           }}</el-tag>
+        </div>
+        <div style="margin: 10px 30px 10px 6px">
+          叶片偏航角：<el-tag style="margin-left: 20px; width: 80px">0.00</el-tag>
         </div>
       </el-card>
     </div>
     <div class="showBox" v-show="!isShow">
       <el-card class="box-card3">
+        <line-chart :chartData="chartDataArr"></line-chart>
+      </el-card>
+      <el-card class="box-card4">
         <line-chart :chartData="chartDataArr"></line-chart>
       </el-card>
     </div>
@@ -475,7 +481,15 @@ export default {
 .box-card3 {
   width: 400px;
   position: absolute;
-  top: 110px;
+  top: 90px;
+  left: calc(100vw - 440px);
+  /* opacity: 0.8; */
+  background: rgba(255, 255, 255, 0.8);
+}
+.box-card4 {
+  width: 400px;
+  position: absolute;
+  top: 430px;
   left: calc(100vw - 440px);
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);

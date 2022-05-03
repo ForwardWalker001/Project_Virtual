@@ -284,7 +284,9 @@ export default {
         });
       } else {
         this.$EventBus.$emit('changLoad',true)
-        this.$router.push("/webGlpage");
+        setTimeout(() => {
+          this.$router.push("/webGlpage");
+        }, 1000);
       }
     },
     // 平滑跳转至指定dom

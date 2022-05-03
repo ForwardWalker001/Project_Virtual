@@ -71,11 +71,10 @@ export class TEngine {
 
     const renderFun = () => {
       orbitControls.update()
-      let temp = this.speed * Math.cos(this.angle - this.angle60)
       // 扇叶转动
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
-          item.rotation.z += temp
+          item.rotation.z += this.speed * Math.cos(this.angle - this.angle60)
         })
       }
       // 角度转动
@@ -92,7 +91,7 @@ export class TEngine {
             }
           }
           if (this.fanBox[0].rotation.y <= this.angle) this.changAngle = false
-        } else {
+        } else if(this.angle60 < this.angle){
           for (let i = 0; i < this.Fanblades.length; i++) {
             this.Fanblades[i].rotation.y += Math.PI / 180 * 0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * 0.1

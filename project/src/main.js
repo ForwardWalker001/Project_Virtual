@@ -12,7 +12,7 @@ Vue.prototype.$axios = axios
 axios.defaults.baseURL = "http://localhost:3000"
 
 Vue.prototype.$EventBus = new Vue()
-Vue.prototype.$EventBus.loading = false
+
 Vue.prototype.$EventBus.tableData = [
   {
     content: "查看实验相关介绍",
