@@ -38,7 +38,6 @@
     </div>
 
     <div class="item" id="index">
-      <div class="title"></div>
       <div class="content index">
         <h1>风力发电虚拟仿真实验</h1>
         <div class="detail">
@@ -420,13 +419,8 @@ export default {
   width: 100%;
   height: 100%;
   font-size: 20px;
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* align-items: center; */
 }
-/* .member-service-protocol :nth-child(2n) {
-    background: red;
-} */
+
 .menu {
   width: 100%;
   position: fixed;
@@ -438,7 +432,6 @@ export default {
   background: #4395ff;
   display: flex;
   justify-content: center;
-  /* align-items: center; */
 }
 .navMenu div {
   height: 60px;

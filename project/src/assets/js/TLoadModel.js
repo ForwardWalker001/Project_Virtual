@@ -1,15 +1,9 @@
 import {  MeshStandardMaterial} from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
-// import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { frameColorTexture, frameDispTexture, frameRoughnessTexture } from './TTextures'
-// import { TEngine } from './TEngine.js'
 
 const objLoader = new OBJLoader()
-// const mtlLoader = new MTLLoader()
-// let mtl = null
-// mtlLoader.load('/grass.mtl',function(material){
-//   mtl = material 
-// })
+
 
 export const grassPromise = new Promise((resolve, reject) => {
   objLoader.loadAsync('/grass.obj').then(group => {
