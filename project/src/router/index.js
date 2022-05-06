@@ -36,6 +36,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+    if(to.path=='/index' && from.path=='/webGlpage'){location.reload()}
     if (to.path === '/index') return next()
     // 查看是否登录
     const loginUser = getStorage('userInfo')

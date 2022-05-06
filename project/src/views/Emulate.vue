@@ -27,6 +27,17 @@
             @change="changAngleFun"
           ></el-input
         ></el-tooltip>
+        <span style="margin: 10px 26px">风机阵列：</span>
+        <el-select v-model="title" style="margin-top: 20px" @change="openShow">
+          <el-option label="单风机运行" value="单风机运行"></el-option>
+          <el-option label="多风机阵列一" value="多风机阵列一"></el-option>
+          <el-option label="多风机阵列二" value="多风机阵列二"></el-option>
+        </el-select>
+        <span style="margin: 10px 26px">场景更换：</span>
+        <el-select v-model="scene" style="margin-top: 20px" @change="changScen">
+          <el-option label="草场" value="草场"></el-option>
+          <el-option label="网格场景" value="网格场景"></el-option>
+        </el-select>
       </el-card>
       <el-button class="stepStyle" @click="dialogTableVisible = true"
         >查看得分情况</el-button
@@ -47,8 +58,8 @@
             fanAngle
           }}</el-tag>
         </div>
-        <div style="margin: 10px 30px 10px 6px">
-          叶片偏航角：<el-tag style="margin-left: 20px; width: 80px">0.00</el-tag>
+        <div style="margin: 10px 30px 10px 20px">
+          叶片角度：<el-tag style="margin-left: 20px; width: 80px">0.00</el-tag>
         </div>
       </el-card>
     </div>
@@ -66,9 +77,9 @@
         type="primary"
         size="medium"
         style="margin-right: 20px"
-        @click="openShow"
+        @click="$router.go(-1)"
       >
-        {{ title }}
+        退出实验
       </el-button>
       <el-button
         type="success"
@@ -92,7 +103,7 @@ import {
   setStorage,
   getStorage,
   putScore,
-  changSpeed
+  changSpeed,
 } from "../assets/js/utils";
 import {
   framePromise,
@@ -109,13 +120,14 @@ export default {
   components: { scoreTable, LineChart },
   data() {
     return {
-      title: "多风机运行",
+      title: "单风机运行",
       isShow: false,
-      electricTitle: "启动电机",
+      electricTitle: "开始实验",
       changAngle: 0,
       TE: null,
       TEspeed: "4 m/s",
       dialogTableVisible: false,
+      scene:'草场',
     };
   },
   mounted() {
@@ -132,17 +144,19 @@ export default {
     // this.frameArr = [];
     this.addFrames(0, 0, 0);
     // this.addGrass(250, 250,{})
-    
-    setTimeout(()=>{
-      this.$EventBus.$emit('changLoad',false)
-    },2000)
+
+    setTimeout(() => {
+      this.$EventBus.$emit("changLoad", false);
+    }, 2000);
   },
   computed: {
     fanSpeed: function () {
       try {
         if (this.TE.openElectric)
           return (
-            this.TE.speed * Math.cos(this.TE.angle - this.TE.angle60) * 200
+            this.TE.speed *
+            Math.cos(this.TE.angle - this.TE.angle60) *
+            200
           ).toFixed(2);
         else {
           return 0;
@@ -160,7 +174,7 @@ export default {
     },
     chartDataArr: function () {
       try {
-        return this.TE.speedArr
+        return this.TE.speedArr;
       } catch (e) {
         return 0;
       }
@@ -179,7 +193,7 @@ export default {
     // 改变风速
     changSpeed(val) {
       this.TE.speed = parseFloat(val);
-      if(this.TE.openElectric)changSpeed(this.TE)
+      if (this.TE.openElectric) changSpeed(this.TE);
       if (!this.$EventBus.tableData[2].isComplete) {
         setStorage("score", getStorage("score") + 10, 0.5);
         putScore(this.$axios, () => {
@@ -189,11 +203,11 @@ export default {
     },
     // 改变风向
     changAngleFun() {
-      let a = parseFloat(this.changAngle)
+      let a = parseFloat(this.changAngle);
       if (typeof a === "number" && !isNaN(a)) {
         this.TE.angle = (Math.PI / 180) * this.changAngle;
         this.TE.changAngle = true;
-        if(this.TE.openElectric)changSpeed(this.TE)
+        if (this.TE.openElectric) changSpeed(this.TE);
         if (!this.$EventBus.tableData[3].isComplete) {
           setStorage("score", getStorage("score") + 20, 0.5);
           putScore(this.$axios, () => {
@@ -202,12 +216,15 @@ export default {
         }
       }
     },
+    changScen(val){
+      console.log(val)
+    },
     // 启动电机
     openElectric() {
       if (!this.TE.openElectric) {
-        this.electricTitle = "关闭电机";
+        this.electricTitle = "停止实验";
         this.TE.openElectric = true;
-        changSpeed(this.TE)
+        changSpeed(this.TE);
         if (!this.$EventBus.tableData[1].isComplete) {
           setStorage("score", getStorage("score") + 10, 0.5);
           putScore(this.$axios, () => {
@@ -215,15 +232,14 @@ export default {
           });
         }
       } else {
-        this.electricTitle = "启动电机";
+        this.electricTitle = "开始实验";
         this.TE.openElectric = false;
-        this.TE.speedArr.push(...(new Array(5).fill(0)))
+        this.TE.speedArr.push(...new Array(5).fill(0));
       }
     },
     // 多风机运行
-    openShow() {
-      if (!this.isShow) {
-        this.title = "单风机运行";
+    openShow(val) {
+      if (val !== "单风机运行") {
         this.isShow = true;
         // this.TE.camera.position.set(190, 130, -190)
         setInterCamera(190, 150, -200, this.TE.camera);
@@ -236,6 +252,42 @@ export default {
         this.TE.fanBox.forEach((item) => {
           item.visible = true;
         });
+        if (val == "多风机阵列二") {
+
+          this.TE.Fanblades[1].position.z = 200;
+          this.TE.cylinder[1].position.z = 200;
+          this.TE.fanBox[1].position.z = 200;
+          this.TE.Fanblades[5].position.z = 200;
+          this.TE.cylinder[5].position.z = 200;
+          this.TE.fanBox[5].position.z = 200;
+          this.TE.Fanblades[10].position.z = -150;
+          this.TE.cylinder[10].position.z = -150;
+          this.TE.fanBox[10].position.z = -150;
+          this.TE.Fanblades[14].position.z = -150;
+          this.TE.cylinder[14].position.z = -150;
+          this.TE.fanBox[14].position.z = -150;
+          for(let i of [3,7,8,12]){
+            this.TE.Fanblades[i].visible = false;
+            this.TE.cylinder[i].visible = false;
+            this.TE.fanBox[i].visible = false;
+          }
+        } else {
+          this.TE.Fanblades[1].position.z = 100;
+          this.TE.cylinder[1].position.z = 100;
+          this.TE.fanBox[1].position.z = 100;
+
+          this.TE.Fanblades[5].position.z = 100;
+          this.TE.cylinder[5].position.z = 100;
+          this.TE.fanBox[5].position.z = 100;
+
+          this.TE.Fanblades[10].position.z = -100;
+          this.TE.cylinder[10].position.z = -100;
+          this.TE.fanBox[10].position.z = -100;
+
+          this.TE.Fanblades[14].position.z = -100;
+          this.TE.cylinder[14].position.z = -100;
+          this.TE.fanBox[14].position.z = -100;
+        }
         if (!this.$EventBus.tableData[4].isComplete) {
           setStorage("score", getStorage("score") + 10, 0.5);
           putScore(this.$axios, () => {
@@ -243,7 +295,6 @@ export default {
           });
         }
       } else {
-        this.title = "多风机运行";
         this.isShow = false;
         this.TE.camera.position.set(15, 91, -100);
         // setInterCamera(20, 90, -100, this.TE.camera)
@@ -334,7 +385,7 @@ export default {
 
         this.line1 = 5;
         this.createFramesLine1(160, 0, 100, line1Obj);
-        this.line2 = 5;
+        this.line2 = 4;
         this.createFramesLine2(160, 0, 0, line2Obj);
         this.line3 = 5;
         this.createFramesLine3(160, 0, -100, line3Obj);
@@ -350,6 +401,7 @@ export default {
 
     createFramesLine2(x, y, z, obj) {
       if (this.line2 <= 0) return;
+      if (x == 0) x = -80;
       obj.frame1.position.set(x + 0.25, y + 45.9, z);
       obj.frame1.visible = false;
       let obj1 = obj.frame1.clone();
@@ -374,6 +426,7 @@ export default {
         frame3: obj3,
       };
       this.line2--;
+
       this.createFramesLine2(x - 80, y, z, frame);
     },
     createFramesLine1(x, y, z, obj) {
@@ -464,7 +517,7 @@ export default {
 .box-card {
   width: 400px;
   position: absolute;
-  top: 150px;
+  top: 100px;
   left: 20px;
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);
@@ -472,7 +525,7 @@ export default {
 .box-card2 {
   width: 300px;
   position: absolute;
-  top: 400px;
+  top: 430px;
   left: 80px;
   text-align: center;
   /* opacity: 0.8; */
@@ -500,8 +553,7 @@ export default {
   opacity: 0.8;
 }
 .schoolLogo {
-  width: 200px;
-  /* height: 50px; */
+  width: 250px;
   position: absolute;
   top: 10px;
   left: 10px;

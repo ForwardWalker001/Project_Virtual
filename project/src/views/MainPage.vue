@@ -265,12 +265,12 @@ export default {
     };
   },
   mounted() {
-    
     this.changNavColor(this.currtNav);
     window.addEventListener("scroll", this.debounce(this.changMenu, 100));
 
     if (this.username != "") this.isLogin = true;
   },
+
   watch: {},
   methods: {
     gowebGl() {

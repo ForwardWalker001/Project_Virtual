@@ -103,7 +103,7 @@ export default {
       total: 0,
       showTable: true,
       showChart: false,
-      title : '图表展示',
+      title : '图表统计',
       serachCondition: {
         school: getStorage("userInfo") ? getStorage("userInfo").school : "",
         name: "",
