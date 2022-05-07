@@ -60,9 +60,9 @@
           >
         </div>
         <div style="margin: 10px 30px 10px 20px">
-          叶片角度：<el-tag style="margin-left: 20px; width: 80px">{{
-            bladeAngle
-          }} 度</el-tag>
+          叶片角度：<el-tag style="margin-left: 20px; width: 80px"
+            >{{ bladeAngle }} 度</el-tag
+          >
         </div>
       </el-card>
     </div>
@@ -147,12 +147,28 @@ export default {
     TE.addObject(...LightsList);
     TE.addObject(...helperList);
 
-    // this.frameArr = [];
     this.addFrames(0, 0, 0);
-    // this.addGrass(250, 250,{})
 
     setTimeout(() => {
       this.$EventBus.$emit("changLoad", false);
+    }, 2000);
+
+    this.complete1 = false;
+    this.complete2 = false;
+    this.complete3 = false;
+    this.complete4 = false;
+
+    let timer = setInterval(() => {
+      // console.log(this.complete1,this.complete2,this.complete3,this.complete4)
+      if (
+        this.complete1 &&
+        this.complete2 &&
+        this.complete3 &&
+        this.complete4
+      ) {
+        this.$EventBus.tableData[5].isComplete = true;
+        clearInterval(timer)
+      }
     }, 2000);
   },
   computed: {
@@ -203,7 +219,7 @@ export default {
       try {
         return (
           this.TE.openElectric *
-          Math.pow(this.TE.speed * 200-2, 3) *
+          Math.pow(this.TE.speed * 200 - 2, 3) *
           (Math.cos(this.TE.angle - this.TE.angle60).toFixed(2) - 0.1)
         );
       } catch (e) {
@@ -231,6 +247,12 @@ export default {
           this.$EventBus.tableData[2].isComplete = true;
         });
       }
+      if (this.$EventBus.tableData[2].isComplete && !this.complete1) {
+        setStorage("score", getStorage("score") + 20, 0.5);
+        putScore(this.$axios, () => {
+          this.complete1 = true;
+        });
+      }
     },
     // 改变风向
     changAngleFun() {
@@ -245,10 +267,16 @@ export default {
             this.$EventBus.tableData[3].isComplete = true;
           });
         }
+        if (this.$EventBus.tableData[3].isComplete && !this.complete2) {
+          setStorage("score", getStorage("score") + 10, 0.5);
+          putScore(this.$axios, () => {
+            this.complete2 = true;
+          });
+        }
       }
     },
+    // 改变场景
     changScen(val) {
-      console.log(val, this.grassArr.length);
       if (val == "草场") {
         this.grassArr.forEach((item) => {
           item.visible = true;
@@ -256,6 +284,12 @@ export default {
       } else {
         this.grassArr.forEach((item) => {
           item.visible = false;
+        });
+      }
+      if (!this.complete3) {
+        setStorage("score", getStorage("score") + 5, 0.5);
+        putScore(this.$axios, () => {
+          this.complete3 = true;
         });
       }
     },
@@ -329,6 +363,12 @@ export default {
           setStorage("score", getStorage("score") + 10, 0.5);
           putScore(this.$axios, () => {
             this.$EventBus.tableData[4].isComplete = true;
+          });
+        }
+        if (this.$EventBus.tableData[4].isComplete && !this.complete4) {
+          setStorage("score", getStorage("score") + 5, 0.5);
+          putScore(this.$axios, () => {
+            this.complete4 = true;
           });
         }
       } else {

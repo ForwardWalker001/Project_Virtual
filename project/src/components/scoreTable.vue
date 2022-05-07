@@ -26,11 +26,6 @@ export default {
     };
   },
   mounted() {
-    
-    // this.$EventBus.$on('changType',(val)=>{
-    //   this.tableData[val].isComplete = true1
-    //   console.log(val)
-    // })
   }
 };
 </script>

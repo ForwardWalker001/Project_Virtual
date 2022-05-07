@@ -20,13 +20,13 @@ Vue.prototype.$EventBus.tableData = [
     isComplete: false,
   },
   {
-    content: "启动电机",
+    content: "开始实验",
     score: 10,
     isComplete: false,
   },
   {
     content: "改变风速并观察风机情况",
-    score: 10,
+    score: 20,
     isComplete: false,
   },
   {
@@ -35,8 +35,12 @@ Vue.prototype.$EventBus.tableData = [
     isComplete: false,
   },
   {
-    content: "观察多风机运行情况",
+    content: "改变风机阵列并观察",
     score: 10,
+    isComplete: false,
+  },{
+    content: "重复上述步骤观察风机情况",
+    score: 30,
     isComplete: false,
   },
 ],
