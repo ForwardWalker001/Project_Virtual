@@ -7,7 +7,7 @@
 <script>
 import * as echarts from "echarts";
 export default {
-  props: ["chartData"],
+  props: ["chartData","title"],
   data() {
     return {
       chartInstance: null,
@@ -31,13 +31,10 @@ export default {
     },
   },
   methods: {
-    // initChart() {
-    //   this.chartInstance = echarts.init(this.$refs.Chart);
-    // },
     updateChart() {
       this.option = {
         title: {
-          text: "转速变化",
+          text: this.title,
           left: "center",
         },
         grid: {
@@ -53,7 +50,6 @@ export default {
         },
         series: [
           {
-            // data: [820, 932, 901, 934, 1290, 1330, 1320],
             data: this.chartData,
             type: "line",
             smooth: true,

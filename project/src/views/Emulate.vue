@@ -11,6 +11,7 @@
         >
           <el-option label="4 m/s" value="0.02"></el-option>
           <el-option label="8 m/s" value="0.04"></el-option>
+          <el-option label="10 m/s" value="0.05"></el-option>
           <el-option label="12 m/s" value="0.06"></el-option>
         </el-select>
         <span style="margin: 10px 26px">改变风向：</span>
@@ -49,26 +50,31 @@
     <div class="showBox" v-show="!isShow">
       <el-card class="box-card2">
         <div style="margin: 10px 30px 20px 20px">
-          转机转速：<el-tag style="margin-left: 20px; width: 80px">{{
-            fanSpeed
-          }}</el-tag>
+          转机转速：<el-tag style="margin-left: 20px; width: 80px"
+            >{{ fanSpeed }} m/s</el-tag
+          >
         </div>
         <div style="margin: 10px 30px 20px 20px">
-          转机角度：<el-tag style="margin-left: 20px; width: 80px">{{
-            fanAngle
-          }}</el-tag>
+          转机角度：<el-tag style="margin-left: 20px; width: 80px"
+            >{{ fanAngle }} 度</el-tag
+          >
         </div>
         <div style="margin: 10px 30px 10px 20px">
-          叶片角度：<el-tag style="margin-left: 20px; width: 80px">0.00</el-tag>
+          叶片角度：<el-tag style="margin-left: 20px; width: 80px">{{
+            bladeAngle
+          }} 度</el-tag>
         </div>
       </el-card>
     </div>
     <div class="showBox" v-show="!isShow">
       <el-card class="box-card3">
-        <line-chart :chartData="chartDataArr"></line-chart>
+        <line-chart title="转速变化" :chartData="chartDataArr"></line-chart>
       </el-card>
       <el-card class="box-card4">
-        <line-chart :chartData="chartDataArr"></line-chart>
+        <line-chart title="转化效率(%)" :chartData="chartDataArr2"></line-chart>
+      </el-card>
+      <el-card class="box-card5">
+        <area-chart :chartData="chartDataArr3"></area-chart>
       </el-card>
     </div>
 
@@ -103,7 +109,7 @@ import {
   setStorage,
   getStorage,
   putScore,
-  changSpeed,
+  updateSpeed,
 } from "../assets/js/utils";
 import {
   framePromise,
@@ -115,9 +121,10 @@ import {
 import { Object3D } from "three";
 import scoreTable from "../components/scoreTable.vue";
 import LineChart from "../components/LineChart.vue";
+import areaChart from "../components/areaChart.vue";
 
 export default {
-  components: { scoreTable, LineChart },
+  components: { scoreTable, LineChart, areaChart },
   data() {
     return {
       title: "单风机运行",
@@ -127,12 +134,11 @@ export default {
       TE: null,
       TEspeed: "4 m/s",
       dialogTableVisible: false,
-      scene:'草场',
+      scene: "草场",
     };
   },
   mounted() {
-    this.dialogTableVisible = true;
-    this.dialogTableVisible = false;
+    this.grassArr = [];
 
     const threeTarget = this.$refs.threeTarget;
     const TE = new TEngine(threeTarget);
@@ -172,9 +178,34 @@ export default {
         return 0;
       }
     },
+    bladeAngle: function () {
+      try {
+        return (this.fanAngle - this.changAngle + 90).toFixed(2);
+      } catch (e) {
+        return 90;
+      }
+    },
     chartDataArr: function () {
       try {
         return this.TE.speedArr;
+      } catch (e) {
+        return 0;
+      }
+    },
+    chartDataArr2: function () {
+      try {
+        return this.TE.transformArr;
+      } catch (e) {
+        return 0;
+      }
+    },
+    chartDataArr3: function () {
+      try {
+        return (
+          this.TE.openElectric *
+          Math.pow(this.TE.speed * 200-2, 3) *
+          (Math.cos(this.TE.angle - this.TE.angle60).toFixed(2) - 0.1)
+        );
       } catch (e) {
         return 0;
       }
@@ -193,7 +224,7 @@ export default {
     // 改变风速
     changSpeed(val) {
       this.TE.speed = parseFloat(val);
-      if (this.TE.openElectric) changSpeed(this.TE);
+      if (this.TE.openElectric) updateSpeed(this.TE);
       if (!this.$EventBus.tableData[2].isComplete) {
         setStorage("score", getStorage("score") + 10, 0.5);
         putScore(this.$axios, () => {
@@ -203,11 +234,11 @@ export default {
     },
     // 改变风向
     changAngleFun() {
-      let a = parseFloat(this.changAngle);
-      if (typeof a === "number" && !isNaN(a)) {
+      this.changAngle = parseFloat(this.changAngle);
+      if (typeof this.changAngle === "number" && !isNaN(this.changAngle)) {
         this.TE.angle = (Math.PI / 180) * this.changAngle;
         this.TE.changAngle = true;
-        if (this.TE.openElectric) changSpeed(this.TE);
+        if (this.TE.openElectric) updateSpeed(this.TE);
         if (!this.$EventBus.tableData[3].isComplete) {
           setStorage("score", getStorage("score") + 20, 0.5);
           putScore(this.$axios, () => {
@@ -216,15 +247,24 @@ export default {
         }
       }
     },
-    changScen(val){
-      console.log(val)
+    changScen(val) {
+      console.log(val, this.grassArr.length);
+      if (val == "草场") {
+        this.grassArr.forEach((item) => {
+          item.visible = true;
+        });
+      } else {
+        this.grassArr.forEach((item) => {
+          item.visible = false;
+        });
+      }
     },
     // 启动电机
     openElectric() {
       if (!this.TE.openElectric) {
         this.electricTitle = "停止实验";
         this.TE.openElectric = true;
-        changSpeed(this.TE);
+        updateSpeed(this.TE);
         if (!this.$EventBus.tableData[1].isComplete) {
           setStorage("score", getStorage("score") + 10, 0.5);
           putScore(this.$axios, () => {
@@ -235,6 +275,7 @@ export default {
         this.electricTitle = "开始实验";
         this.TE.openElectric = false;
         this.TE.speedArr.push(...new Array(5).fill(0));
+        this.TE.transformArr.push(...new Array(5).fill(0));
       }
     },
     // 多风机运行
@@ -253,7 +294,6 @@ export default {
           item.visible = true;
         });
         if (val == "多风机阵列二") {
-
           this.TE.Fanblades[1].position.z = 200;
           this.TE.cylinder[1].position.z = 200;
           this.TE.fanBox[1].position.z = 200;
@@ -266,7 +306,7 @@ export default {
           this.TE.Fanblades[14].position.z = -150;
           this.TE.cylinder[14].position.z = -150;
           this.TE.fanBox[14].position.z = -150;
-          for(let i of [3,7,8,12]){
+          for (let i of [3, 7, 8, 12]) {
             this.TE.Fanblades[i].visible = false;
             this.TE.cylinder[i].visible = false;
             this.TE.fanBox[i].visible = false;
@@ -275,15 +315,12 @@ export default {
           this.TE.Fanblades[1].position.z = 100;
           this.TE.cylinder[1].position.z = 100;
           this.TE.fanBox[1].position.z = 100;
-
           this.TE.Fanblades[5].position.z = 100;
           this.TE.cylinder[5].position.z = 100;
           this.TE.fanBox[5].position.z = 100;
-
           this.TE.Fanblades[10].position.z = -100;
           this.TE.cylinder[10].position.z = -100;
           this.TE.fanBox[10].position.z = -100;
-
           this.TE.Fanblades[14].position.z = -100;
           this.TE.cylinder[14].position.z = -100;
           this.TE.fanBox[14].position.z = -100;
@@ -321,6 +358,7 @@ export default {
     // 草地
     addGrass(x, z, obj) {
       obj.position.set(x, 0, z);
+      this.grassArr.push(obj);
       this.TE.addObject(obj);
       if (x - 10 < -250) {
         x = 260;
@@ -394,6 +432,7 @@ export default {
       grassPromise.then((frame) => {
         frame.position.set(250, 0, 250);
         let obj = frame.clone();
+        this.grassArr.push(frame);
         this.TE.addObject(frame);
         this.addGrass(250 - 10, 250, obj);
       });
@@ -544,6 +583,14 @@ export default {
   position: absolute;
   top: 430px;
   left: calc(100vw - 440px);
+  /* opacity: 0.8; */
+  background: rgba(255, 255, 255, 0.8);
+}
+.box-card5 {
+  width: 400px;
+  position: absolute;
+  top: 430px;
+  left: calc(50vw - 200px);
   /* opacity: 0.8; */
   background: rgba(255, 255, 255, 0.8);
 }

@@ -27,13 +27,15 @@ export class TEngine {
     this.camera = new PerspectiveCamera(45, dom.offsetWidth / dom.offsetHeight, 1, 1000)
 
     this.camera.position.set(15, 91, -100)
-    this.camera.lookAt(new Vector3(0, 50, 0))
+    this.camera.lookAt(new Vector3(0, 100, 0))
     this.camera.up = new Vector3(0, 1, 0)
 
     // 风速
     this.speed = 0.02
     // 历史转机速度
     this.speedArr = new Array(5).fill(0)
+    // 历史转化效率
+    this.transformArr = new Array(5).fill(0)
     // 风向
     this.angle = 0
     // 转机角度
@@ -105,7 +107,8 @@ export class TEngine {
         }
         this.angle60 = this.fanBox[0].rotation.y
       }
-
+      // this.camera.position.x += 0.1
+      // console.log(this.camera.position)
       renderer.render(scene, this.camera)
       stats.update()
       requestAnimationFrame(renderFun)
