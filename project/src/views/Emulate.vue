@@ -37,6 +37,7 @@
         <span style="margin: 10px 26px">场景更换：</span>
         <el-select v-model="scene" style="margin-top: 20px" @change="changScen">
           <el-option label="草场" value="草场"></el-option>
+          <el-option label="海水" value="海水"></el-option>
           <el-option label="网格场景" value="网格场景"></el-option>
         </el-select>
       </el-card>
@@ -101,9 +102,10 @@
 <script>
 // import { Material, Mesh, WebGLRenderer } from 'three'
 import { TEngine } from "../assets/js/TEngine.js";
-import { basicObjectList } from "../assets/js/TBasicObject";
+import { basicObjectList,stagematerial } from "../assets/js/TBasicObject";
 import { LightsList } from "../assets/js/Tlights";
 import { helperList } from "../assets/js/THelper";
+import { hsmaterial} from '../assets/js/TTextures'
 import {
   setInterCamera,
   setStorage,
@@ -145,6 +147,7 @@ export default {
     this.TE = TE;
     TE.addObject(...basicObjectList);
     TE.addObject(...LightsList);
+    // 网格模型
     TE.addObject(...helperList);
 
     this.addFrames(0, 0, 0);
@@ -281,10 +284,20 @@ export default {
         this.grassArr.forEach((item) => {
           item.visible = true;
         });
-      } else {
+        helperList[0].visible = false
+        // basicObjectList[0].material.map = null
+      } else if(val == "网格场景"){
         this.grassArr.forEach((item) => {
           item.visible = false;
         });
+        helperList[0].visible = true
+        basicObjectList[0].material = stagematerial
+      }else{
+        this.grassArr.forEach((item) => {
+          item.visible = false;
+        });
+        helperList[0].visible = false
+        basicObjectList[0].material = hsmaterial
       }
       if (!this.complete3) {
         setStorage("score", getStorage("score") + 5, 0.5);
@@ -373,7 +386,7 @@ export default {
         }
       } else {
         this.isShow = false;
-        this.TE.camera.position.set(15, 91, -100);
+        this.TE.camera.position.set(15, 80, -130);
         // setInterCamera(20, 90, -100, this.TE.camera)
         this.TE.Fanblades.forEach((item, index) => {
           if (index == 0) item.visible = true;

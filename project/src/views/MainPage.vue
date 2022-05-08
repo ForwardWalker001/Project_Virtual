@@ -1,13 +1,14 @@
 <template>
-  <div class="member-service-protocol"
-    >
+  <div class="member-service-protocol">
     <div class="menu">
       <div class="navMenu">
         <div @click="goToAnchor('index')" ref="index">首页</div>
         <div @click="goToAnchor('backdrop')" ref="backdrop">实验背景</div>
         <div @click="goToAnchor('guide')" ref="guide">实验指南</div>
-        <div @click="goToAnchor('step')" ref="step">实验步骤</div>
-        <div @click="goToAnchor('showScore')" ref="showScore">成绩评定与查看</div>
+        <div @click="goToAnchor('step')" ref="step">实验注意事项</div>
+        <div @click="goToAnchor('showScore')" ref="showScore">
+          成绩评定与查看
+        </div>
       </div>
       <el-tooltip :disabled="username == ''" placement="bottom">
         <span slot="content" style="cursor: pointer" @click="exitLogin"
@@ -111,19 +112,24 @@
               机舱：机舱包容着风力发电机的关键设备，包括齿轮箱、发电机。维护人员可以通过风力发电机塔进入机舱。机舱左端是风力发电机转子，即转子叶片及轴。
             </p>
             <p>
-              转子叶片：捉获风，并将风力传送到转子轴心。现代600千瓦风力发电机上，每个转子叶片的测量长度大约为20米，而且被设计得很像飞机的机翼。</p>
+              转子叶片：捉获风，并将风力传送到转子轴心。现代600千瓦风力发电机上，每个转子叶片的测量长度大约为20米，而且被设计得很像飞机的机翼。
+            </p>
             <p>轴心：转子轴心附着在风力发电机的低速轴上。</p>
             <p>
               低速轴：风力发电机的低速轴将转子轴心与齿轮箱连接在一起。在现代600千瓦风力发电机上，转子转速相当慢，大约为19至30转每分钟。轴中有用于液压系统的导管，来激发空气动力闸的运行。
             </p>
-            <p>高速轴及其机械闸：高速轴以1500转每分钟运转，并驱动发电机。它装备有紧急机械闸，用于空气动力闸失效时，或风力发电机被维修时。</p>
+            <p>
+              高速轴及其机械闸：高速轴以1500转每分钟运转，并驱动发电机。它装备有紧急机械闸，用于空气动力闸失效时，或风力发电机被维修时。
+            </p>
             <p>
               齿轮箱：齿轮箱左边是低速轴，它可以将高速轴的转速提高至低速轴的50倍。
             </p>
             <p>
               发电机：通常被称为感应电机或异步发电机。在现代风力发电机上，最大电力输出通常为500至1500千瓦。
             </p>
-            <p>偏航装置：借助电动机转动机舱，以使转子正对着风。偏航装置由电子控制器操作，电子控制器可以通过风向标来感觉风向。显示了风力发电机偏航。通常，在风改变其方向时，风力发电机一次只会偏转几度。</p>
+            <p>
+              偏航装置：借助电动机转动机舱，以使转子正对着风。偏航装置由电子控制器操作，电子控制器可以通过风向标来感觉风向。显示了风力发电机偏航。通常，在风改变其方向时，风力发电机一次只会偏转几度。
+            </p>
             <p>
               电子控制器：包含一台不断监控风力发电机状态的计算机，并控制偏航装置。为防止任何故障（即齿轮箱或发电机的过热），该控制器可以自动停止风力发电机的转动，并通过电话调制解调器来呼叫风力发电机操作员。
             </p>
@@ -136,15 +142,11 @@
             </p>
             <p>风速计及风向标：用于测量风速及风向</p>
           </div>
-          <!-- <p class="info-title">实验设计原则</p>
+          <!-- <p class="info-title">平台虚拟仿真内容介绍</p>
           <div class="info-text">
             <p>
-              智能电网综合自动化虚拟仿真实验系统采用基于IE
-              C61850标准的纯数字模拟实验方法，以典型220kV智能变电站系统为基础，构建基于真实系统运行环境的虚拟仿真实验环境，其系统结构主要包括实时数字仿真PC、数据服务器及WEB服务器等，以及实验教学案例辅助系统。其设计原则是：以虚拟智能变电站所装设的继电保护与自动装置原理为基础，先根据模拟典型电网主接线，利用仿真计算软件构建模拟电网计算模型，并进行正常运行及故障情况下电压、电流及装置行为的仿真模拟计算，用于模拟电网运行过程中的各种故障现象及继电保护与自动装置的行为，生成电网实时运行基础数据，存储于数据服务器，与VR虚拟仿真环境进行交互，通过继电保护与自动装置的动作情况，理解继电保护与自动装置的原理，并利用WEB服务器实现基于B/S结构Web服务实现远程教学。此外，将原智能变电站综合自动化实验室和动模实验室的实验环境作为实验教学案例辅助系统连入虚拟仿真系统，作为教学案例校验与基础数据的辅助工具。
             </p>
-            <p>
-              需要指出的是智能电网综合自动化虚拟仿真实验系统是不依赖于实验教学案例辅助系统的，是可以独立运行的。
-            </p>
+
           </div> -->
         </div>
       </div>
@@ -152,36 +154,23 @@
 
     <div class="item" id="step">
       <div class="line"></div>
-      <div class="title">实验步骤</div>
+      <div class="title">实验注意事项</div>
       <div class="content">
         <div class="main-text">
-          <p class="info-title">实验背景</p>
+          <p class="info-title">推荐运行环境</p>
           <div class="info-text">
             <p>
-              电能作为一种经济、实用、清洁且容易控制和转换的能源形态，在国民经济各个领域中广泛应用，是人民生活中不可或缺的主要能源应用形式。日常生活中使用的电能主要来自其他形式能量的转换，其转换与控制是由电力系统及其控制系统完成的，而电网综合自动化系统是保证电力系统可靠运行的基础。
+              系统基于WebGL，全程于Google Chrome上开发，Google Chrome对WebGL的支持程序在所有浏览器中支持度最高，运行该系统时推荐使用Google浏览器87版本及以上。
             </p>
             <p>
-              随着国民经济的不断发展，我国也已进入第三代智能电网大规模发展和建设的阶段，对相关人才的需求较为迫切，培养满足第三代电网建设需求的电气工程专业技术人才成为高等学校相关学科的紧迫任务。
-            </p>
-            <p>
-              目前，从培养满足第三代电网技术要求的专业技术人才的角度来看，传统的教学方法与设施存在着教学内容滞后、学生感性认知度低、实验操作具有危险性、学生实践机会较少等诸多不足，因此，基于虚拟仿真技术的智能电网实验教学平台可以克服上述缺点，已成为实验教学的发展方向。
+              本系统运用了的大量图形与模型，对计算机显示设备性能有一定的要求，推荐使用高性能的核显或者独立显卡。
             </p>
           </div>
-          <p class="info-title">实验目标</p>
+          <p class="info-title">运行过程中的注意事项</p>
           <div class="info-text">
-            <p>
-              智能电网综合自动化虚拟仿真实验通过智能电网综合自动化虚拟仿真实验教学软件平台能够重现智能电网系统中自动装置与继电保护功能实现的原理及各种物理过程，使得学生通过仿真教学软件平台的操作与练习，理解和掌握电力系统运行、故障、自动装置与继电保护的原理；通过交互式虚拟仿真实验教学平台，避免传统实验教学中的可能接触到高电压、大电流的危险性，学生可以自主设计和改进实验环节，培养学生的创新思维和创新设计能力，达到良好的教学效果与目的。
-            </p>
-          </div>
-          <p class="info-title">实验设计原则</p>
-          <div class="info-text">
-            <p>
-              智能电网综合自动化虚拟仿真实验系统采用基于IE
-              C61850标准的纯数字模拟实验方法，以典型220kV智能变电站系统为基础，构建基于真实系统运行环境的虚拟仿真实验环境，其系统结构主要包括实时数字仿真PC、数据服务器及WEB服务器等，以及实验教学案例辅助系统。其设计原则是：以虚拟智能变电站所装设的继电保护与自动装置原理为基础，先根据模拟典型电网主接线，利用仿真计算软件构建模拟电网计算模型，并进行正常运行及故障情况下电压、电流及装置行为的仿真模拟计算，用于模拟电网运行过程中的各种故障现象及继电保护与自动装置的行为，生成电网实时运行基础数据，存储于数据服务器，与VR虚拟仿真环境进行交互，通过继电保护与自动装置的动作情况，理解继电保护与自动装置的原理，并利用WEB服务器实现基于B/S结构Web服务实现远程教学。此外，将原智能变电站综合自动化实验室和动模实验室的实验环境作为实验教学案例辅助系统连入虚拟仿真系统，作为教学案例校验与基础数据的辅助工具。
-            </p>
-            <p>
-              需要指出的是智能电网综合自动化虚拟仿真实验系统是不依赖于实验教学案例辅助系统的，是可以独立运行的。
-            </p>
+            <p>虚拟仿真运行过程中请不要进行刷新，一方面进行了刷新已完成的成绩不会保存，另一方面系统加载模型需要大量时间，刷新不会完全加载模型可能会导致模型不能显示。</p>
+            <p>如虚拟仿真出现意外，可退出实验或者退回至上一页面重新进行仿真页面重新开始。</p>
+            <p>在虚拟仿真运行过程中，如页面卡顿，可将场景更换项切换至‘网格场景’，如还是卡顿请更换设备使用上述推荐运行环境设备。</p>
           </div>
         </div>
       </div>
@@ -189,7 +178,7 @@
     <!-- 成绩查看 -->
     <div class="item" id="showScore">
       <div class="line"></div>
-      <div class="title" style="margin-bottom:20px">成绩评定与查看</div>
+      <div class="title" style="margin-bottom: 20px">成绩评定与查看</div>
       <div class="content">
         <score-table></score-table>
         <!-- 如果登录为学生，弹出成绩表单 -->
@@ -242,7 +231,7 @@
 
 <script>
 import LoginForm from "../components/login.vue";
-import scoreTable from "../components/scoreTable.vue"
+import scoreTable from "../components/scoreTable.vue";
 import { getStorage, setStorage } from "../util/StorageMan";
 
 export default {
@@ -261,7 +250,7 @@ export default {
       userPower: getStorage("userInfo")
         ? getStorage("userInfo").userPower
         : null,
-      isgetScore: false
+      isgetScore: false,
     };
   },
   mounted() {
@@ -282,7 +271,7 @@ export default {
           duration: 2000,
         });
       } else {
-        this.$EventBus.$emit('changLoad',true)
+        this.$EventBus.$emit("changLoad", true);
         setTimeout(() => {
           this.$router.push("/webGlpage");
         }, 1000);
@@ -297,10 +286,10 @@ export default {
       });
     },
     changNavColor(refDom) {
-      if(refDom != 'index' && !this.isgetScore && this.isLogin){
-        this.isgetScore = true
-        setStorage('score',10,0.5)
-        this.putScore()
+      if (refDom != "index" && !this.isgetScore && this.isLogin) {
+        this.isgetScore = true;
+        setStorage("score", 10, 0.5);
+        this.putScore();
       }
       setStorage("nowNav", refDom, 0.0006);
       this.currtNav = refDom;
@@ -312,7 +301,7 @@ export default {
     changMenu() {
       var windowHeight = document.documentElement.clientHeight;
       var threshold = 300;
-      this.navList = ["index", "backdrop", "guide", "step", "showScore"],
+      (this.navList = ["index", "backdrop", "guide", "step", "showScore"]),
         this.navList.forEach((domId) => {
           let target = document.getElementById(domId).getBoundingClientRect();
           let targetTop = target.top;
@@ -376,18 +365,22 @@ export default {
               type: "warning",
             });
           });
-        }
+      }
     },
-    putScore(){
-        this.$axios
-          .get(`/changScore?user_id=${getStorage("userInfo").id}&score=${getStorage("score")}`)
-          .then((res) => {
-            let { code } = res.data;
-            if (code == 200) {
-              // console.log(code)
-              this.$EventBus.tableData[0].isComplete = true
-            }
-          })
+    putScore() {
+      this.$axios
+        .get(
+          `/changScore?user_id=${getStorage("userInfo").id}&score=${getStorage(
+            "score"
+          )}`
+        )
+        .then((res) => {
+          let { code } = res.data;
+          if (code == 200) {
+            // console.log(code)
+            this.$EventBus.tableData[0].isComplete = true;
+          }
+        });
     },
     toScoreMang() {
       if (!this.isLogin) {

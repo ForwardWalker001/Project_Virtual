@@ -4,13 +4,17 @@ import {
   Scene,
   Vector3,
   WebGLRenderer,
-  // MOUSE,
-  // Vector2,
-  // Raycaster
+  PMREMGenerator,
+  SphereBufferGeometry,
+  Mesh,
+  MeshBasicMaterial,
+  ReinhardToneMapping,
+  // BackSide
 } from "three"
 
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 // import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 
 export class TEngine {
@@ -26,8 +30,8 @@ export class TEngine {
     const scene = new Scene()
     this.camera = new PerspectiveCamera(45, dom.offsetWidth / dom.offsetHeight, 1, 1000)
 
-    this.camera.position.set(15, 91, -100)
-    this.camera.lookAt(new Vector3(0, 100, 0))
+    this.camera.position.set(15, 80, -130)
+    // this.camera.lookAt(0,100,0)
     this.camera.up = new Vector3(0, 1, 0)
 
     // 风速
@@ -65,14 +69,11 @@ export class TEngine {
 
     // 初始orbitControls
     const orbitControls = new OrbitControls(this.camera, renderer.domElement)
-    // orbitControls.mouseButtons = {
-    //   LEFT: null ,
-    //   MIDDLE: MOUSE.DOLLY,
-    //   RIGHT: MOUSE.ROTATE
-    // }
+    orbitControls.target = new Vector3(0,10,0);
 
     const renderFun = () => {
       orbitControls.update()
+      // this.camera.update()
       // 扇叶转动
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
@@ -86,18 +87,18 @@ export class TEngine {
           for (let i = 0; i < this.Fanblades.length; i++) {
             this.Fanblades[i].rotation.y += Math.PI / 180 * -0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * -0.1
-            if(this.fanBox[i].rotation.y <= Math.PI / 180 * -60){
+            if (this.fanBox[i].rotation.y <= Math.PI / 180 * -60) {
               this.Fanblades[i].rotation.y = Math.PI / 180 * -60
               this.fanBox[i].rotation.y = Math.PI / 180 * -60
               this.changAngle = false
             }
           }
           if (this.fanBox[0].rotation.y <= this.angle) this.changAngle = false
-        } else if(this.angle60 < this.angle){
+        } else if (this.angle60 < this.angle) {
           for (let i = 0; i < this.Fanblades.length; i++) {
             this.Fanblades[i].rotation.y += Math.PI / 180 * 0.1
             this.fanBox[i].rotation.y += Math.PI / 180 * 0.1
-            if(this.fanBox[i].rotation.y >= Math.PI / 180 * 60){
+            if (this.fanBox[i].rotation.y >= Math.PI / 180 * 60) {
               this.Fanblades[i].rotation.y = Math.PI / 180 * 60
               this.fanBox[i].rotation.y = Math.PI / 180 * 60
               this.changAngle = false
@@ -122,10 +123,24 @@ export class TEngine {
 
     this.renderer = renderer
     this.scene = scene
-    // this.transformControls = transformControls
-    // this.mouse = mouse
-    // this.raycaster = raycaster
+    
+    const pmremGenerator = new PMREMGenerator(this.renderer); // 使用hdr作为背景色
+    pmremGenerator.compileEquirectangularShader();
+    new EXRLoader()
+      .load('/OutdoorHDRI019_4K-HDR.exr', function (texture) {
+        var material = new MeshBasicMaterial({
+          map: texture,
+        });
+        var geo = new SphereBufferGeometry(300);
+        //反转球，使贴图贴在球内侧而不在外侧
+        geo.scale(-1, 1, 1);
+        var mesh = new Mesh(geo, material);
+        scene.add(mesh)
+      });
+      renderer.toneMapping = ReinhardToneMapping;
+      renderer.toneMappingExposure = 3;
   }
+
   addObject(...object) {
     object.forEach(elem => {
       this.scene.add(elem)
