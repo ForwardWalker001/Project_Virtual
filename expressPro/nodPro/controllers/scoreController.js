@@ -86,7 +86,6 @@ const conditionScore = (req, res) => {
 
     numCondition(sqlNum, sqlArr)
 
-
 }
 
 module.exports = {

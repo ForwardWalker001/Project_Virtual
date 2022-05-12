@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/login',userTable.login)
 router.post('/register', userTable.register)
+router.post('/userInfoChang',userTable.userInfoChang)
 router.get('/scoreSearch', userTable.scoreSearch)
 router.get('/changScore', userTable.changScore)
 router.get('/allScore', scoreTable.conditionScore)

@@ -120,7 +120,9 @@ import {
   grassPromise,
 } from "../assets/js/TLoadModel";
 
-import { Object3D } from "three";
+import { Object3D,
+Vector3 
+} from "three";
 import scoreTable from "../components/scoreTable.vue";
 import LineChart from "../components/LineChart.vue";
 import areaChart from "../components/areaChart.vue";
@@ -387,7 +389,8 @@ export default {
       } else {
         this.isShow = false;
         this.TE.camera.position.set(15, 80, -130);
-        // setInterCamera(20, 90, -100, this.TE.camera)
+        this.TE.orbitControls.target = new Vector3(0,10,0);
+
         this.TE.Fanblades.forEach((item, index) => {
           if (index == 0) item.visible = true;
           else {

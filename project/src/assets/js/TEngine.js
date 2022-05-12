@@ -15,13 +15,12 @@ import {
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
-// import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 
 export class TEngine {
 
   constructor(dom) {
     this.dom = dom
-    const renderer = new WebGLRenderer({
+    const renderer = this.renderer = new WebGLRenderer({
       antialias: true
     })
 
@@ -31,7 +30,7 @@ export class TEngine {
     this.camera = new PerspectiveCamera(45, dom.offsetWidth / dom.offsetHeight, 1, 1000)
 
     this.camera.position.set(15, 80, -130)
-    // this.camera.lookAt(0,100,0)
+    // this.camera.lookAt(0,10,0)
     this.camera.up = new Vector3(0, 1, 0)
 
     // 风速
@@ -68,12 +67,13 @@ export class TEngine {
     statsDom.style.left = 'unset'
 
     // 初始orbitControls
-    const orbitControls = new OrbitControls(this.camera, renderer.domElement)
+    let orbitControls =this.orbitControls= new OrbitControls(this.camera, renderer.domElement)
+    this.init = false
     orbitControls.target = new Vector3(0,10,0);
 
     const renderFun = () => {
       orbitControls.update()
-      // this.camera.update()
+
       // 扇叶转动
       if (this.Fanblades.length >= 1 && this.openElectric) {
         this.Fanblades.forEach((item) => {
@@ -135,6 +135,7 @@ export class TEngine {
         //反转球，使贴图贴在球内侧而不在外侧
         geo.scale(-1, 1, 1);
         var mesh = new Mesh(geo, material);
+        
         scene.add(mesh)
       });
       renderer.toneMapping = ReinhardToneMapping;
