@@ -1,6 +1,7 @@
-# Virtual_Project
-虚拟风电仿真系统
-运行本系统之前，请先安装 node.js 并配置好全局电脑环境
+# Virtual_Project 虚拟风电仿真系统
+运行本系统之前，请先下载以下内容
+安装编程软件 visual studio code
+安装 node.js 并配置好全局电脑环境
 
 # 前端文件代码
 Virtual_project 下的 project文件夹 为Vue 前端文件
