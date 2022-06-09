@@ -44,7 +44,7 @@ export default {
     updateChart() {
       this.option = {
         title: {
-          text: "发电量(W/s)",
+          text: "发电量(kw/h)",
           left: "center",
         },
         grid: {

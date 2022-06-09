@@ -40,7 +40,7 @@
 
     <div class="item" id="index">
       <div class="content index">
-        <h1>风力发电虚拟仿真实验</h1>
+        <h1>风力发电机虚拟仿真实验</h1>
         <div class="detail">
           <span>学校： 湖南科技大学</span>
           <span style="margin-left: 50px">负责人： XXX</span>

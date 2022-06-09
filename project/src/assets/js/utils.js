@@ -38,7 +38,7 @@ export const updateSpeed = (TE) =>{
       }
       if (num1 <= 5) {
         TE.speedArr.push(temp.toFixed(4) * 200)
-        TE.transformArr.push(Math.cos(TE.angle - TE.angle60).toFixed(2)*100-10)
+        TE.transformArr.push(Math.abs(Math.cos(TE.angle - TE.angle60).toFixed(2)*100-30))
       }else{
         clearInterval(timer)
       }
